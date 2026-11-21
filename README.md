@@ -28,6 +28,12 @@ dan port utama dari Settings > Wireless debugging, lalu terus menjalankan
 `hdm doctor`. Selepas itu semua arahan lain boleh dijalankan dengan `--adb`,
 contohnya `./hdm --adb scan`.
 
+### Guna Termux di telefon untuk mengawal tablet
+
+Jalankan `./hdm sambung` di telefon dan masukkan IP tablet (cth `192.168.1.4`)
+bila ditanya. Telefon dan tablet mesti guna Wi-Fi yang sama. Dialog pairing di
+tablet kekal terbuka kerana anda menaip di telefon.
+
 ## Persediaan dengan Shizuku (pilihan)
 
 1. Pasang **Shizuku** dan **Termux** (dari F-Droid / GitHub, bukan versi Play Store lama).

@@ -65,20 +65,31 @@ def run(ask=input, say=print, sh=_sh, which_ok=None) -> str | None:
         say(f"Sudah bersambung: {existing[0]}")
         return existing[0]
 
-    say("\nLANGKAH 1 - Pairing")
+    say("\nDi mana Termux ini berjalan?")
+    say("  - Telefon lain: taip IP tablet (lihat 'IP address & Port' pada tablet, cth 192.168.1.4)")
+    say("  - Tablet itu sendiri: tekan Enter sahaja")
+    ip = ""
+    while True:
+        ip = ask("IP tablet: ").strip().split(":")[0]
+        if not ip or re.fullmatch(r"\d{1,3}(?:\.\d{1,3}){3}", ip):
+            break
+        say("  Format IP: 192.168.1.4")
+    host = ip or "localhost"
+    remote = bool(ip)
+
+    say("\nLANGKAH 1 - Pairing (pada tablet)")
     say("Buka Settings > System & updates > Developer options > Wireless debugging")
     say("Tekan 'Pair device with pairing code'. Biarkan skrin itu terbuka.")
     say("(Petua: belah skrin - Termux di sebelah, Settings di sebelah lagi.)\n")
 
-    host = "localhost"
     for attempt in range(3):
         target = None
         while target is None:
-            target = parse_target(ask("Port pairing (nombor selepas ':' pada skrin pairing): "))
+            target = parse_target(ask("Port pairing (nombor selepas ':' pada skrin pairing): "), default_host=host)
             if target is None:
                 say("  Itu bukan port. Port ialah 4-5 digit SELEPAS ':' dalam 'IP address & Port'"
                     " (contoh 192.168.1.4:41235 -> 41235). Kod 6 digit ditanya selepas ini.")
-        host, pport = target
+        _, pport = target
         code = re.sub(r"\D", "", ask("Kod pairing 6 digit: "))
         if len(code) != 6:
             say("  Kod mesti 6 digit. Cuba lagi.")
@@ -92,8 +103,8 @@ def run(ask=input, say=print, sh=_sh, which_ok=None) -> str | None:
             say("  Punca biasa: dialog pairing tertutup bila anda bertukar ke Termux.")
             say("  Dialog itu MESTI kelihatan di skrin semasa anda tekan Enter -")
             say("  guna skrin pisah atau tetingkap terapung (lihat README).")
-        if host == "localhost":
-            say("  Cuba juga taip IP penuh, contoh 192.168.1.4:PORT.")
+        if remote:
+            say("  Pastikan telefon & tablet guna Wi-Fi yang sama dan skrin tablet tidak berkunci.")
         say("  Setiap dialog baru = PORT baru + kod baru. Baca kedua-duanya semula.")
     else:
         say("Pairing gagal 3 kali. Pastikan Wi-Fi bersambung dan cuba lagi nanti.")
@@ -103,11 +114,11 @@ def run(ask=input, say=print, sh=_sh, which_ok=None) -> str | None:
     found = discover_connect_port(sh)
     targets = []
     if found:
-        targets.append((host if host == "localhost" else found[0], found[1]))
+        targets.append((found[0] if remote else "localhost", found[1]))
         say(f"  Port utama dikesan secara automatik: {found[1]}")
     for attempt in range(3):
         if not targets:
-            say("Tutup dialog pairing. Lihat skrin utama Wireless debugging, bahagian 'IP address & Port'.")
+            say("Pada tablet: tutup dialog pairing, lihat 'IP address & Port' di skrin utama Wireless debugging.")
             t = parse_target(ask("Port utama: "), default_host=host)
             if t is None:
                 say("  Masukkan nombor port sahaja, contoh: 38757")
@@ -125,7 +136,7 @@ def run(ask=input, say=print, sh=_sh, which_ok=None) -> str | None:
         else:
             say(f"  ✘ Gagal sambung: {out.strip().splitlines()[-1] if out.strip() else 'tiada jawapan'}")
             if "refused" in out:
-                if h != "localhost":
+                if not remote and h != "localhost":
                     targets.insert(0, ("localhost", p))
                     say("  Mencuba localhost secara automatik...")
                     continue

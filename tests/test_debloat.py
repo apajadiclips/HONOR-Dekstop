@@ -186,7 +186,7 @@ class Sambung(Base):
 
     def test_manual_flow(self):
         adb = FakeAdb()
-        serial, _ = self._run(adb, ["41235", "852 244", "38757"])
+        serial, _ = self._run(adb, ["", "41235", "852 244", "38757"])
         self.assertEqual(serial, "localhost:38757")
         self.assertIn(["adb", "pair", "localhost:41235", "852244"], adb.calls)
         from debloat.actions.connect import saved_serial
@@ -194,18 +194,25 @@ class Sambung(Base):
 
     def test_mdns_skips_port_question(self):
         adb = FakeAdb(mdns_port=40001)
-        serial, _ = self._run(adb, ["41235", "123456"])  # no third answer needed
+        serial, _ = self._run(adb, ["", "41235", "123456"])  # no port question
         self.assertEqual(serial, "localhost:40001")
 
     def test_bad_input_reprompts(self):
         adb = FakeAdb()
-        serial, out = self._run(adb, ["PORT_PAIR", "41235", "123456", "38757"])
+        serial, out = self._run(adb, ["", "PORT_PAIR", "41235", "123456", "38757"])
         self.assertEqual(serial, "localhost:38757")
         self.assertTrue(any("bukan port" in o for o in out))
 
     def test_pair_fails_three_times(self):
-        serial, out = self._run(FakeAdb(pair_ok=False), ["41235", "111111"] * 3)
+        serial, out = self._run(FakeAdb(pair_ok=False), [""] + ["41235", "111111"] * 3)
         self.assertIsNone(serial)
+
+    def test_phone_uses_tablet_ip_everywhere(self):
+        adb = FakeAdb()
+        serial, _ = self._run(adb, ["192.168.1.4", "39841", "250208", "43229"])
+        self.assertEqual(serial, "192.168.1.4:43229")
+        self.assertIn(["adb", "pair", "192.168.1.4:39841", "250208"], adb.calls)
+        self.assertFalse(any("localhost" in " ".join(c) for c in adb.calls))
 
     def test_already_connected(self):
         adb = FakeAdb(); adb.connected = ["localhost:5555"]
