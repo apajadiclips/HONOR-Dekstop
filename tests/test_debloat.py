@@ -124,7 +124,7 @@ class Doctor(Base):
         from debloat.actions import doctor
         res = doctor.run_checks(self.dev)
         names = {n: s for s, n, _ in res}
-        self.assertEqual(names["Akses Shizuku"], "OK")
+        self.assertEqual(names["Akses shell"], "OK")
         self.assertEqual(names["Bateri"], "OK")          # 33% but charging
         self.assertEqual(names["Storan dalaman"], "OK")  # ~9.5 GB free
         self.assertEqual(names["Backup asal"], "AMARAN")

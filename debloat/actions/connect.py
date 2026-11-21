@@ -124,6 +124,13 @@ def run(ask=input, say=print, sh=_sh, which_ok=None) -> str | None:
             say("  Tablet minta kebenaran. Tekan 'Allow' pada pop-up, kemudian cuba lagi.")
         else:
             say(f"  ✘ Gagal sambung: {out.strip().splitlines()[-1] if out.strip() else 'tiada jawapan'}")
+            if "refused" in out:
+                if h != "localhost":
+                    targets.insert(0, ("localhost", p))
+                    say("  Mencuba localhost secara automatik...")
+                    continue
+                say("  Port ini tidak aktif. Keluar dari skrin Wireless debugging dan masuk semula")
+                say("  (atau matikan & hidupkan suisnya), kemudian baca port BARU. Pairing tak perlu diulang.")
     say("Tidak dapat bersambung. Semak port utama dan cuba 'hdm sambung' sekali lagi.")
     return None
 

@@ -25,9 +25,10 @@ def run_checks(runner) -> list[tuple[str, str, str]]:
 
     uid = _safe(runner, ["id"]).strip()
     if "uid=2000" in uid or "uid=0" in uid:
-        r.append((OK, "Akses Shizuku", uid.split()[0] if uid else ""))
+        r.append((OK, "Akses shell", uid.split()[0] if uid else ""))
     else:
-        r.append((CRIT, "Akses Shizuku", "Tiada akses shell. Mulakan Shizuku dahulu."))
+        r.append((CRIT, "Akses shell", "Tidak bersambung ke tablet. Jalankan 'hdm sambung' "
+                  "(ADB) atau mulakan Shizuku (rish) dahulu."))
         return r
 
     info = device_info(runner)
