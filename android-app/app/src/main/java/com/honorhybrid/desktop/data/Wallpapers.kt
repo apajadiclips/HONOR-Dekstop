@@ -24,5 +24,8 @@ object Wallpapers {
         Zone.GAME -> byId("neon")
         Zone.SOSIAL -> byId("lautan")
         Zone.HIBURAN -> byId("senja")
+        Zone.KERJA -> byId("aurora")
+        Zone.KREATIF -> byId("hutan")
+        Zone.ALAT -> byId("lautan")
     }
 }

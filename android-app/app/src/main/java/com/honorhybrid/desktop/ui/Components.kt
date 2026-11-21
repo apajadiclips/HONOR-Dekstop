@@ -36,7 +36,35 @@ import com.honorhybrid.desktop.data.AppEntry
 import com.honorhybrid.desktop.data.Prefs
 import com.honorhybrid.desktop.data.Zone
 
-/** App icon with label. Tap opens it, long-press opens the pin / zone / info menu. */
+/** Long-press menu shared by every app icon. [extra] adds context items (e.g. "Keluarkan dari folder"). */
+@Composable
+fun AppMenu(app: AppEntry, prefs: Prefs, expanded: Boolean, onDismiss: () -> Unit,
+            extra: List<Pair<String, () -> Unit>> = emptyList()) {
+    val context = LocalContext.current
+    DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
+        extra.forEach { (label, action) -> DropdownMenuItem(text = { Text(label) }, onClick = { action(); onDismiss() }) }
+        DropdownMenuItem(
+            text = { Text(if (app.key in prefs.taskbar) "Buang dari taskbar" else "Sematkan ke taskbar") },
+            onClick = { prefs.toggleTaskbar(app.key); onDismiss() })
+        DropdownMenuItem(
+            text = { Text(if (prefs.onDesktop(app.key)) "Buang dari desktop" else "Tambah ke desktop") },
+            onClick = { prefs.toggleDesktop(app.key); onDismiss() })
+        val current = prefs.zoneOf(app)
+        Zone.entries.forEach { z ->
+            DropdownMenuItem(
+                text = { Text(if (current == z) "✓ Ruangan ${z.label}" else "Pindah ke ruangan ${z.label}") },
+                onClick = { prefs.setZone(app.packageName, z.name); onDismiss() })
+        }
+        if (current != null) DropdownMenuItem(text = { Text("Keluarkan dari ruangan") },
+            onClick = { prefs.setZone(app.packageName, "NONE"); onDismiss() })
+        DropdownMenuItem(text = { Text("Maklumat aplikasi") },
+            onClick = { Actions.appInfo(context, app.packageName); onDismiss() })
+        if (!app.isSystem) DropdownMenuItem(text = { Text("Nyahpasang") },
+            onClick = { Actions.uninstall(context, app.packageName); onDismiss() })
+    }
+}
+
+/** App icon with label. Tap opens it, long-press opens the menu. */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AppIcon(
@@ -45,6 +73,7 @@ fun AppIcon(
     iconSize: Dp = 52.dp,
     showLabel: Boolean = true,
     labelColor: Color = Color.White,
+    extraMenu: List<Pair<String, () -> Unit>> = emptyList(),
     onLaunched: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -62,34 +91,22 @@ fun AppIcon(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(5.dp),
         ) {
-            Image(app.icon, app.label, Modifier.size(iconSize).shadow(6.dp, RoundedCornerShape(iconSize / 4)))
-            if (showLabel) Text(
-                app.label, color = labelColor, fontSize = 12.sp, maxLines = 2, overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center, lineHeight = 14.sp,
-            )
+            AppGlyph(app, iconSize)
+            if (showLabel) IconLabel(app.label, labelColor)
         }
-        DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
-            DropdownMenuItem(
-                text = { Text(if (app.key in prefs.taskbar) "Buang dari taskbar" else "Sematkan ke taskbar") },
-                onClick = { prefs.toggleTaskbar(app.key); menu = false })
-            DropdownMenuItem(
-                text = { Text(if (app.key in prefs.desktop) "Buang dari desktop" else "Tambah ke desktop") },
-                onClick = { prefs.toggleDesktop(app.key); menu = false })
-            val current = prefs.zoneOf(app)
-            Zone.entries.forEach { z ->
-                DropdownMenuItem(
-                    text = { Text(if (current == z) "✓ Ruangan ${z.label}" else "Pindah ke ruangan ${z.label}") },
-                    onClick = { prefs.setZone(app.packageName, z.name); menu = false })
-            }
-            if (current != null) DropdownMenuItem(text = { Text("Keluarkan dari ruangan") },
-                onClick = { prefs.setZone(app.packageName, "NONE"); menu = false })
-            DropdownMenuItem(text = { Text("Maklumat aplikasi") },
-                onClick = { Actions.appInfo(context, app.packageName); menu = false })
-            if (!app.isSystem) DropdownMenuItem(text = { Text("Nyahpasang") },
-                onClick = { Actions.uninstall(context, app.packageName); menu = false })
-        }
+        AppMenu(app, prefs, menu, { menu = false }, extraMenu)
     }
 }
+
+@Composable
+fun AppGlyph(app: AppEntry, size: Dp) =
+    Image(app.icon, app.label, Modifier.size(size).shadow(6.dp, RoundedCornerShape(size / 4)))
+
+@Composable
+fun IconLabel(text: String, color: Color = Color.White) = Text(
+    text, color = color, fontSize = 12.sp, maxLines = 2, overflow = TextOverflow.Ellipsis,
+    textAlign = TextAlign.Center, lineHeight = 14.sp,
+)
 
 @Composable
 fun GlassIconButton(icon: ImageVector, label: String, active: Boolean = false, size: Dp = 48.dp, onClick: () -> Unit) {

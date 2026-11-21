@@ -21,6 +21,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -70,7 +73,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -78,6 +83,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.NotificationManagerCompat
 import com.honorhybrid.desktop.data.AppEntry
+import com.honorhybrid.desktop.data.ClockPos
+import com.honorhybrid.desktop.data.DesktopItem
+import com.honorhybrid.desktop.data.HomeMode
 import com.honorhybrid.desktop.data.Prefs
 import com.honorhybrid.desktop.data.Wallpapers
 import com.honorhybrid.desktop.data.Zone
@@ -92,7 +100,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-enum class Overlay { NONE, START, PANEL, ZONES, WALLPAPER }
+enum class Overlay { NONE, START, PANEL, ZONES, WALLPAPER, SETTINGS, FOLDER }
 
 private val MS = Locale("ms", "MY")
 
@@ -100,6 +108,8 @@ private val MS = Locale("ms", "MY")
 fun Launcher(apps: List<AppEntry>, prefs: Prefs, homeTick: Int) {
     var overlay by remember { mutableStateOf(Overlay.NONE) }
     var zone by remember { mutableStateOf(Zone.GAME) }
+    var folder by remember { mutableStateOf<DesktopItem?>(null) }
+    var grid by remember { mutableStateOf(GridSpec(6, 5)) }
     LaunchedEffect(homeTick) { overlay = Overlay.NONE }
     BackHandler(overlay != Overlay.NONE) { overlay = Overlay.NONE }
     val close = { overlay = Overlay.NONE }
@@ -107,33 +117,61 @@ fun Launcher(apps: List<AppEntry>, prefs: Prefs, homeTick: Int) {
     val now = rememberNow()
     val battery = rememberBattery()
     val preset = Wallpapers.byId(prefs.wallpaperId)
+    val tablet = prefs.mode == HomeMode.TABLET
+    val clockTop = tablet || prefs.clockPos == ClockPos.ATAS
+    val swapClock = { prefs.setClock(if (prefs.clockPos == ClockPos.ATAS) ClockPos.BAWAH else ClockPos.ATAS) }
+    val density = LocalDensity.current
 
     Box(Modifier.fillMaxSize()) {
         Wallpaper(preset, if (prefs.wallpaperId == "custom") prefs.customWallpaper else null)
 
-        // Tap on empty desktop closes any open panel.
-        Box(Modifier.fillMaxSize().clickable(remember { MutableInteractionSource() }, null) { close() })
+        // Empty desktop: tap closes panels, long-press opens settings, swipe down opens the glass panel.
+        BoxWithConstraints(Modifier.fillMaxSize()) {
+            val topZone = with(density) { maxHeight.toPx() } * 0.35f
+            val minSwipe = with(density) { 90.dp.toPx() }
+            var startY by remember { mutableStateOf(0f) }
+            var dy by remember { mutableStateOf(0f) }
+            Box(Modifier.fillMaxSize()
+                .pointerInput(Unit) { detectTapGestures(onTap = { close() }, onLongPress = { overlay = Overlay.SETTINGS }) }
+                .pointerInput(prefs.swipePanel) {
+                    if (prefs.swipePanel) detectVerticalDragGestures(
+                        onDragStart = { startY = it.y; dy = 0f },
+                        onVerticalDrag = { _, d -> dy += d },
+                        onDragEnd = { if (startY < topZone && dy > minSwipe) overlay = Overlay.PANEL },
+                    )
+                })
+        }
 
         BoxWithConstraints(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding()) {
             val wide = maxWidth > 700.dp
-            DesktopIcons(prefs.desktop.mapNotNull { byKey[it] }, prefs,
-                Modifier.align(Alignment.TopStart).padding(16.dp))
-            ClockWidget(now, battery, Modifier.align(Alignment.TopEnd).padding(16.dp).width(if (wide) 320.dp else 220.dp))
+            DesktopGrid(byKey, prefs,
+                Modifier.fillMaxSize().padding(start = 12.dp, top = if (prefs.showZoneBar) 64.dp else 12.dp,
+                    end = if (clockTop) (if (wide) 340.dp else 236.dp) else 12.dp, bottom = 84.dp),
+                onGrid = { grid = it }, onOpenFolder = { folder = it; overlay = Overlay.FOLDER })
+            if (prefs.showZoneBar) ZoneBar(Modifier.align(Alignment.TopCenter).padding(top = 10.dp)) {
+                zone = it; overlay = Overlay.ZONES
+            }
+            if (clockTop) ClockWidget(now, battery, canSwap = !tablet, onSwap = swapClock,
+                modifier = Modifier.align(Alignment.TopEnd).padding(16.dp).width(if (wide) 320.dp else 220.dp))
 
             AnimatedVisibility(overlay == Overlay.START, Modifier.align(Alignment.BottomCenter),
                 enter = fadeIn() + slideInVertically { it / 6 }, exit = fadeOut() + slideOutVertically { it / 6 }) {
                 StartMenu(apps, prefs, onClose = close, onWallpaper = { overlay = Overlay.WALLPAPER },
-                    modifier = Modifier.padding(bottom = 76.dp, start = 16.dp, end = 16.dp)
+                    onSettings = { overlay = Overlay.SETTINGS },
+                    modifier = Modifier.padding(bottom = 84.dp, start = 16.dp, end = 16.dp)
                         .widthIn(max = 680.dp).heightIn(max = (maxHeight - 110.dp).coerceAtLeast(300.dp)))
             }
             AnimatedVisibility(overlay == Overlay.PANEL, Modifier.align(Alignment.TopEnd),
-                enter = fadeIn() + slideInHorizontally { it / 3 }, exit = fadeOut() + slideOutHorizontally { it / 3 }) {
+                enter = fadeIn() + slideInVertically { -it / 4 }, exit = fadeOut() + slideOutVertically { -it / 4 }) {
                 QuickPanel(apps, now, battery, onWallpaper = { overlay = Overlay.WALLPAPER }, onClose = close,
-                    modifier = Modifier.padding(top = 12.dp, end = 12.dp, bottom = 76.dp)
+                    modifier = Modifier.padding(top = 12.dp, end = 12.dp, bottom = 84.dp)
                         .width(if (wide) 400.dp else maxWidth - 24.dp).fillMaxHeight())
             }
-            Taskbar(prefs.taskbar.mapNotNull { byKey[it] }, prefs, now, battery, overlay,
+            if (tablet) Dock(prefs.taskbar.mapNotNull { byKey[it] }, prefs, overlay,
                 onToggle = { o -> overlay = if (overlay == o) Overlay.NONE else o },
+                modifier = Modifier.align(Alignment.BottomCenter))
+            else Taskbar(prefs.taskbar.mapNotNull { byKey[it] }, prefs, now, battery, overlay, showClock = !clockTop,
+                onSwapClock = swapClock, onToggle = { o -> overlay = if (overlay == o) Overlay.NONE else o },
                 modifier = Modifier.align(Alignment.BottomCenter))
         }
 
@@ -143,24 +181,58 @@ fun Launcher(apps: List<AppEntry>, prefs: Prefs, homeTick: Int) {
         AnimatedVisibility(overlay == Overlay.WALLPAPER, enter = fadeIn(), exit = fadeOut()) {
             WallpaperPicker(prefs, onClose = close)
         }
+        AnimatedVisibility(overlay == Overlay.SETTINGS, enter = fadeIn(), exit = fadeOut()) {
+            SettingsPanel(prefs, onWallpaper = { overlay = Overlay.WALLPAPER }, onClose = close)
+        }
+        val f = folder
+        if (overlay == Overlay.FOLDER && f != null) FolderPopup(f, byKey, prefs, grid, onClose = close)
+    }
+}
+
+/** Zone shortcuts in the middle of the top edge. */
+@Composable
+private fun ZoneBar(modifier: Modifier, onPick: (Zone) -> Unit) {
+    Row(modifier.glass(22.dp).padding(5.dp).horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        Zone.entries.forEach { z ->
+            Row(Modifier.height(38.dp).clip(RoundedCornerShape(19.dp)).clickable { onPick(z) }.padding(horizontal = 12.dp),
+                verticalAlignment = Alignment.CenterVertically) {
+                Icon(zoneIcon(z), null, tint = Color.White, modifier = Modifier.size(16.dp))
+                Spacer(Modifier.width(6.dp))
+                Text(z.short, color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+            }
+        }
+    }
+}
+
+fun zoneIcon(z: Zone) = when (z) {
+    Zone.GAME -> Glyph.pad; Zone.SOSIAL -> Glyph.chat; Zone.HIBURAN -> Glyph.play
+    Zone.KERJA -> Glyph.work; Zone.KREATIF -> Glyph.brush; Zone.ALAT -> Glyph.tool
+}
+
+/** Tablet (MagicOS-style) mode: floating dock instead of the full-width taskbar. */
+@Composable
+private fun Dock(pinned: List<AppEntry>, prefs: Prefs, overlay: Overlay, onToggle: (Overlay) -> Unit, modifier: Modifier) {
+    Row(modifier.padding(bottom = 12.dp).glass(26.dp).height(76.dp).padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        pinned.forEach { AppIcon(it, prefs, iconSize = 48.dp, showLabel = false) }
+        Box(Modifier.width(1.dp).height(40.dp).background(Color(0x40FFFFFF)))
+        GlassIconButton(Glyph.grid, "Semua aplikasi", overlay == Overlay.START) { onToggle(Overlay.START) }
+        GlassIconButton(Glyph.pad, "Ruangan", overlay == Overlay.ZONES) { onToggle(Overlay.ZONES) }
+        GlassIconButton(Glyph.bell, "Notifikasi", overlay == Overlay.PANEL) { onToggle(Overlay.PANEL) }
     }
 }
 
 // ---------------------------------------------------------------- desktop
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun DesktopIcons(apps: List<AppEntry>, prefs: Prefs, modifier: Modifier) {
-    FlowRow(modifier.width(196.dp), maxItemsInEachRow = 2, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        apps.forEach { AppIcon(it, prefs, iconSize = 52.dp, labelColor = Color.White) }
-    }
-}
-
-@Composable
-private fun ClockWidget(now: Long, battery: Int, modifier: Modifier) {
+private fun ClockWidget(now: Long, battery: Int, canSwap: Boolean, onSwap: () -> Unit, modifier: Modifier) {
     Column(modifier.glass(20.dp).padding(18.dp)) {
-        Text(SimpleDateFormat("h:mm", MS).format(Date(now)), color = Color.White, fontSize = 44.sp,
-            fontWeight = FontWeight.SemiBold)
+        Row(verticalAlignment = Alignment.Top) {
+            Text(SimpleDateFormat("h:mm", MS).format(Date(now)), color = Color.White, fontSize = 44.sp,
+                fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
+            if (canSwap) GlassIconButton(Glyph.swap, "Pindah jam ke bawah", size = 40.dp) { onSwap() }
+        }
         Text(SimpleDateFormat("EEEE, d MMMM", MS).format(Date(now)), color = Muted, fontSize = 14.sp)
         Spacer(Modifier.height(6.dp))
         Text("Bateri $battery%", color = Muted, fontSize = 13.sp)
@@ -171,7 +243,7 @@ private fun ClockWidget(now: Long, battery: Int, modifier: Modifier) {
 
 @Composable
 private fun Taskbar(pinned: List<AppEntry>, prefs: Prefs, now: Long, battery: Int, overlay: Overlay,
-                    onToggle: (Overlay) -> Unit, modifier: Modifier) {
+                    showClock: Boolean, onSwapClock: () -> Unit, onToggle: (Overlay) -> Unit, modifier: Modifier) {
     Row(
         modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 8.dp).glass(18.dp).height(60.dp)
             .padding(horizontal = 8.dp),
@@ -188,9 +260,13 @@ private fun Taskbar(pinned: List<AppEntry>, prefs: Prefs, now: Long, battery: In
         Row(Modifier.weight(1f), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
             Text("$battery%", color = Color.White, fontSize = 12.sp)
             Spacer(Modifier.width(10.dp))
-            Column(horizontalAlignment = Alignment.End) {
-                Text(SimpleDateFormat("h:mm a", MS).format(Date(now)), color = Color.White, fontSize = 12.sp)
-                Text(SimpleDateFormat("d/M/yyyy", MS).format(Date(now)), color = Muted, fontSize = 11.sp)
+            if (showClock) {
+                Column(horizontalAlignment = Alignment.End,
+                    modifier = Modifier.clip(RoundedCornerShape(8.dp)).clickable { onSwapClock() }.padding(4.dp)) {
+                    Text(SimpleDateFormat("h:mm a", MS).format(Date(now)), color = Color.White, fontSize = 12.sp)
+                    Text(SimpleDateFormat("d/M/yyyy", MS).format(Date(now)), color = Muted, fontSize = 11.sp)
+                }
+                GlassIconButton(Glyph.swap, "Pindah jam ke atas", size = 40.dp) { onSwapClock() }
             }
             Spacer(Modifier.width(4.dp))
             GlassIconButton(Glyph.bell, "Notifikasi & tetapan pantas", overlay == Overlay.PANEL) { onToggle(Overlay.PANEL) }
@@ -202,7 +278,7 @@ private fun Taskbar(pinned: List<AppEntry>, prefs: Prefs, now: Long, battery: In
 
 @Composable
 private fun StartMenu(apps: List<AppEntry>, prefs: Prefs, onClose: () -> Unit, onWallpaper: () -> Unit,
-                      modifier: Modifier) {
+                      onSettings: () -> Unit, modifier: Modifier) {
     val context = LocalContext.current
     var query by remember { mutableStateOf("") }
     val shown = remember(apps, query) {
@@ -233,10 +309,8 @@ private fun StartMenu(apps: List<AppEntry>, prefs: Prefs, onClose: () -> Unit, o
         }
         Row(Modifier.fillMaxWidth().padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Pill("Wallpaper", Glyph.image, Modifier.weight(1f)) { onWallpaper() }
-            Pill("Tetapan", Glyph.gear, Modifier.weight(1f)) { Actions.settings(context, Settings.ACTION_SETTINGS); onClose() }
-            Pill("Tukar launcher", Glyph.home, Modifier.weight(1f)) {
-                Actions.settings(context, Settings.ACTION_HOME_SETTINGS); onClose()
-            }
+            Pill("Tetapan desktop", Glyph.sliders, Modifier.weight(1f)) { onSettings() }
+            Pill("HONOR Home", Glyph.home, Modifier.weight(1f)) { Actions.openHonorHome(context); onClose() }
         }
     }
 }
@@ -384,12 +458,10 @@ private fun ZonesScreen(apps: List<AppEntry>, prefs: Prefs, zone: Zone, onZone: 
                             Text("Ruangan ${zone.label}", color = Color.White, fontSize = 26.sp, fontWeight = FontWeight.Bold)
                             Text(zoneSubtitle(zone), color = Muted, fontSize = 13.sp)
                         }
-                        Pill(if (zone == Zone.HIBURAN) "Mod Teater" else "Mod Fokus", Glyph.moon) {
-                            Actions.settings(context, "android.settings.ZEN_MODE_SETTINGS")
-                        }
+                        FocusButton(zone)
                     }
-                    if (!wide) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Zone.entries.forEach { z -> Box(Modifier.weight(1f)) { ZoneNav(z, z == zone) { onZone(z) } } }
+                    if (!wide) Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Zone.entries.forEach { z -> Box(Modifier.width(130.dp)) { ZoneNav(z, z == zone) { onZone(z) } } }
                     }
                     Column(Modifier.weight(1f).fillMaxWidth().glass(24.dp).padding(18.dp)) {
                         Text("${inZone.size} aplikasi · tekan lama untuk pindah ruangan", color = Muted, fontSize = 12.sp,
@@ -415,7 +487,7 @@ private fun ZoneNav(z: Zone, selected: Boolean, onClick: () -> Unit) {
             .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(when (z) { Zone.GAME -> Glyph.pad; Zone.SOSIAL -> Glyph.chat; Zone.HIBURAN -> Glyph.play }, null,
+        Icon(zoneIcon(z), null,
             tint = Color.White, modifier = Modifier.size(18.dp))
         Spacer(Modifier.width(10.dp))
         Text(z.label, color = Color.White, fontSize = 14.sp,
@@ -427,6 +499,28 @@ private fun zoneSubtitle(z: Zone) = when (z) {
     Zone.GAME -> "Semua game anda di satu tempat"
     Zone.SOSIAL -> "Sembang dan media sosial"
     Zone.HIBURAN -> "Video, muzik dan podcast"
+    Zone.KERJA -> "Dokumen, e-mel dan kalendar"
+    Zone.KREATIF -> "Kamera, galeri dan suntingan"
+    Zone.ALAT -> "Fail, tetapan dan utiliti"
+}
+
+/** Mod Game / Mod Teater / Mod Fokus: a real Do-Not-Disturb toggle. */
+@Composable
+private fun FocusButton(zone: Zone) {
+    val context = LocalContext.current
+    var on by remember { mutableStateOf(Focus.isOn(context)) }
+    LaunchedEffect(Unit) { while (true) { on = Focus.isOn(context); delay(1500) } }
+    val name = when (zone) { Zone.GAME -> "Mod Game"; Zone.HIBURAN -> "Mod Teater"; else -> "Mod Fokus" }
+    Column(horizontalAlignment = Alignment.End) {
+        Row(Modifier.height(44.dp).glass(22.dp, strong = !on).background(if (on) Color(0x5522C55E) else Color.Transparent)
+            .clickable { if (Focus.toggle(context)) on = Focus.isOn(context) }.padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            Icon(Glyph.moon, null, tint = Color.White, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(8.dp))
+            Text("$name: ${if (on) "Aktif" else "Mati"}", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+        }
+        Text("Senyapkan notifikasi (Jangan Ganggu)", color = Muted, fontSize = 11.sp, modifier = Modifier.padding(top = 4.dp))
+    }
 }
 
 // ---------------------------------------------------------------- wallpaper picker

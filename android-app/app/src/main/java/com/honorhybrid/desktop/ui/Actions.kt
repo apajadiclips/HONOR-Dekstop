@@ -23,6 +23,12 @@ object Actions {
         if (!start(context, Intent(action), quiet = true)) start(context, Intent(fallback))
     }
 
+    /** Opens HONOR Home (MagicOS launcher) without changing the default launcher. */
+    fun openHonorHome(context: Context) {
+        val i = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME).setPackage("com.hihonor.android.launcher")
+        if (!start(context, i, quiet = true)) settings(context, Settings.ACTION_HOME_SETTINGS)
+    }
+
     fun start(context: Context, intent: Intent, quiet: Boolean = false): Boolean = try {
         context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)); true
     } catch (e: ActivityNotFoundException) {

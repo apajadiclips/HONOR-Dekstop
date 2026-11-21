@@ -12,6 +12,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshotFlow
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import com.honorhybrid.desktop.data.AppEntry
 import com.honorhybrid.desktop.data.AppRepository
@@ -41,6 +45,7 @@ class MainActivity : ComponentActivity() {
             addDataScheme("package")
         })
         reload()
+        lifecycleScope.launch { snapshotFlow { prefs.hideStatusBar }.collect { applyBars() } }
         setContent {
             MaterialTheme(colorScheme = darkColorScheme()) {
                 Launcher(apps.value, prefs, homeTick.intValue)
@@ -54,6 +59,18 @@ class MainActivity : ComponentActivity() {
             prefs.seedDefaults(list)
             apps.value = list
         }
+    }
+
+    /** Optional: hide the system status bar on the desktop (swipe from the top shows it briefly). */
+    private fun applyBars() {
+        val c = WindowCompat.getInsetsController(window, window.decorView)
+        c.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        if (prefs.hideStatusBar) c.hide(WindowInsetsCompat.Type.statusBars()) else c.show(WindowInsetsCompat.Type.statusBars())
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus && ::prefs.isInitialized) applyBars()
     }
 
     /** Pressing Home while the launcher is showing closes any open panel. */

@@ -8,7 +8,10 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.drawable.toBitmap
 
-enum class Zone(val label: String) { GAME("Game"), SOSIAL("Media Sosial"), HIBURAN("Hiburan") }
+enum class Zone(val label: String, val short: String) {
+    GAME("Game", "Game"), SOSIAL("Media Sosial", "Sosial"), HIBURAN("Hiburan", "Hiburan"),
+    KERJA("Kerja", "Kerja"), KREATIF("Kreatif", "Kreatif"), ALAT("Alat", "Alat"),
+}
 
 data class AppEntry(
     val packageName: String,
@@ -32,9 +35,25 @@ private val MEDIA_HINTS = listOf(
     "podcast", "radio", "player", "twitch", "primevideo", "hbo", "wetv", "tonton",
 )
 
+private val CREATIVE_HINTS = listOf(
+    "lvoverseas", "capcut", "canva", "picsart", "lightroom", "snapseed", "camera", "gallery", "photo",
+    "inshot", "vsco", "kinemaster", "editor", "paint", "draw", "sketch",
+)
+private val WORK_HINTS = listOf(
+    "docs", "sheets", "slides", "office", "word", "excel", "powerpoint", "wps", "notion", "gmail", "email",
+    "mail", "calendar", "keep", "drive", "zoom", "teams", "meet", "slack", "translate", "classroom", "pdf", "notes",
+)
+private val TOOL_HINTS = listOf(
+    "files", "filemanager", "calculator", "clock", "settings", "compass", "recorder", "scanner", "vpn",
+    "termux", "shizuku", "adguard", "googlequicksearchbox", "contacts", "phonemanager", "systemmanager",
+)
+
 fun guessZone(pkg: String, category: Int): Zone? {
     val p = pkg.lowercase()
     return when {
+        TOOL_HINTS.any { it in p } -> Zone.ALAT
+        CREATIVE_HINTS.any { it in p } || category == ApplicationInfo.CATEGORY_IMAGE -> Zone.KREATIF
+        WORK_HINTS.any { it in p } || category == ApplicationInfo.CATEGORY_PRODUCTIVITY -> Zone.KERJA
         category == ApplicationInfo.CATEGORY_GAME || ".game" in p || "games" in p -> Zone.GAME
         category == ApplicationInfo.CATEGORY_SOCIAL || SOCIAL_HINTS.any { it in p } -> Zone.SOSIAL
         category == ApplicationInfo.CATEGORY_VIDEO || category == ApplicationInfo.CATEGORY_AUDIO ||

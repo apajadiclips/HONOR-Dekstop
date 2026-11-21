@@ -33,4 +33,10 @@ object Glyph {
     val home = stroke("M3 11l9-7l9 7M5 10v10h14V10")
     val globe = stroke("M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18")
     val close = stroke("M6 6l12 12M18 6L6 18")
+    val swap = stroke("M7 4v16M7 4L3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4")
+    val sliders = stroke("M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0M14 4v4M8 10v4M16 16v4")
+    val brush = stroke("M14 4l6 6l-9 9H5v-6z")
+    val work = stroke("M4 8h16v11H4zM9 8V5h6v3M4 13h16")
+    val tool = stroke("M14 6a4 4 0 0 0 5 5l-8 8a2 2 0 0 1-3-3l8-8a4 4 0 0 0-2-2z")
+    val tablet = stroke("M6 3h12v18H6zM11 18h2")
 }
