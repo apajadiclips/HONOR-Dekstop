@@ -180,6 +180,9 @@ class Sambung(Base):
         self.assertEqual(parse_target("192.168.1.4:38757"), ("192.168.1.4", 38757))
         self.assertEqual(parse_target("IP address & Port 192.168.1.4:38757"), ("192.168.1.4", 38757))
         self.assertIsNone(parse_target("PORT_UTAMA"))
+        self.assertIsNone(parse_target("606523"))        # a pairing code, not a port
+        self.assertIsNone(parse_target("777722666655"))
+        self.assertEqual(parse_target("localhost:43229"), ("localhost", 43229))
 
     def test_manual_flow(self):
         adb = FakeAdb()
@@ -198,7 +201,7 @@ class Sambung(Base):
         adb = FakeAdb()
         serial, out = self._run(adb, ["PORT_PAIR", "41235", "123456", "38757"])
         self.assertEqual(serial, "localhost:38757")
-        self.assertTrue(any("nombor port" in o for o in out))
+        self.assertTrue(any("bukan port" in o for o in out))
 
     def test_pair_fails_three_times(self):
         serial, out = self._run(FakeAdb(pair_ok=False), ["41235", "111111"] * 3)

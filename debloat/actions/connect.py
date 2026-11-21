@@ -18,13 +18,15 @@ def _sh(cmd: list[str], timeout: int = 60) -> str:
 
 
 def parse_target(text: str, default_host: str = "localhost") -> tuple[str, int] | None:
-    """Accept '41235', ':41235', '192.168.1.4:41235' or 'IP address & Port 192.168.1.4:41235'."""
-    text = text.strip()
-    m = re.search(r"(\d{1,3}(?:\.\d{1,3}){3}|localhost)?\s*:?\s*(\d{2,5})\s*$", text)
-    if not m:
+    """Accept '41235', ':41235', '192.168.1.4:41235' or 'IP address & Port 192.168.1.4:41235'.
+
+    A 6-digit number is a pairing code, never a port, so it is rejected.
+    """
+    m = re.search(r"(?:(\d{1,3}(?:\.\d{1,3}){3}|localhost)\s*:\s*|^|[\s:])(\d+)\s*$", text.strip())
+    if not m or len(m.group(2)) > 5:
         return None
     port = int(m.group(2))
-    if not 1 <= port <= 65535:
+    if not 1024 <= port <= 65535:
         return None
     return (m.group(1) or default_host, port)
 
@@ -74,7 +76,8 @@ def run(ask=input, say=print, sh=_sh, which_ok=None) -> str | None:
         while target is None:
             target = parse_target(ask("Port pairing (nombor selepas ':' pada skrin pairing): "))
             if target is None:
-                say("  Masukkan nombor port sahaja, contoh: 41235")
+                say("  Itu bukan port. Port ialah 4-5 digit SELEPAS ':' dalam 'IP address & Port'"
+                    " (contoh 192.168.1.4:41235 -> 41235). Kod 6 digit ditanya selepas ini.")
         host, pport = target
         code = re.sub(r"\D", "", ask("Kod pairing 6 digit: "))
         if len(code) != 6:
@@ -85,7 +88,13 @@ def run(ask=input, say=print, sh=_sh, which_ok=None) -> str | None:
             say("  ✔ Pairing berjaya.")
             break
         say(f"  ✘ Pairing gagal: {out.strip().splitlines()[-1] if out.strip() else 'tiada jawapan'}")
-        say("  Tutup dialog pairing, tekan 'Pair device with pairing code' semula untuk kod baru.")
+        if "protocol fault" in out:
+            say("  Punca biasa: dialog pairing tertutup bila anda bertukar ke Termux.")
+            say("  Dialog itu MESTI kelihatan di skrin semasa anda tekan Enter -")
+            say("  guna skrin pisah atau tetingkap terapung (lihat README).")
+        if host == "localhost":
+            say("  Cuba juga taip IP penuh, contoh 192.168.1.4:PORT.")
+        say("  Setiap dialog baru = PORT baru + kod baru. Baca kedua-duanya semula.")
     else:
         say("Pairing gagal 3 kali. Pastikan Wi-Fi bersambung dan cuba lagi nanti.")
         return None
