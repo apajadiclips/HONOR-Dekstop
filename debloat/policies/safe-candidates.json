@@ -1,0 +1,14 @@
+{
+  "category": "A",
+  "description": "Kategori A - Calon selamat. Masih perlu pengesahan satu-satu. Senarai ini BELUM disahkan pada ELN-L09: semak output 'hdm scan' dahulu.",
+  "packages": [
+    {"id": "com.facebook.appmanager", "label": "Facebook App Manager (pra-pasang)"},
+    {"id": "com.facebook.services", "label": "Facebook Services (pra-pasang)"},
+    {"id": "com.facebook.system", "label": "Facebook App Installer (pra-pasang)"},
+    {"id": "com.netflix.partner.activation", "label": "Netflix partner activation"},
+    {"id": "com.netflix.mediaclient", "label": "Netflix (pra-pasang)"},
+    {"id": "com.booking", "label": "Booking.com (pra-pasang)"},
+    {"id": "com.ebay.mobile", "label": "eBay (pra-pasang)"}
+  ],
+  "prefixes": []
+}

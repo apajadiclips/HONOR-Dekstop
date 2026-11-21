@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# HONOR Debloat Manager launcher (Termux).
+HDM_SRC="$(cd "$(dirname "$0")" && pwd)" exec python3 -c \
+  'import os, sys; sys.path.insert(0, os.environ["HDM_SRC"]); from debloat.cli import main; raise SystemExit(main())' "$@"

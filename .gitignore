@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+# Device backups never belong in git (they hold your package list).
+honor-debloat/

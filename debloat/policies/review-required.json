@@ -1,0 +1,11 @@
+{
+  "category": "B",
+  "description": "Kategori B - Perlu semakan. Setiap tindakan memerlukan --reviewed dan pengesahan manual. Semua pakej sistem yang tidak tersenarai di mana-mana juga jatuh ke kategori ini.",
+  "packages": [],
+  "prefixes": [
+    {"prefix": "com.hihonor.", "label": "Aplikasi HONOR (App Market, Browser, Assistant, servis tambahan) - semak fungsi dan kebergantungan dahulu"},
+    {"prefix": "com.hihonor.android.", "label": "Komponen MagicOS - semak dengan teliti"},
+    {"prefix": "com.google.", "label": "Aplikasi Google - semak kebergantungan dahulu"},
+    {"prefix": "com.android.", "label": "Komponen AOSP - semak dengan teliti"}
+  ]
+}
