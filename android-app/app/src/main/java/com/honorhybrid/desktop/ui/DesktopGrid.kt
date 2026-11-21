@@ -83,7 +83,7 @@ fun DesktopGrid(
         androidx.compose.runtime.SideEffect {
             prefs.gridCols = cols; prefs.gridRows = rows; onGrid(GridSpec(cols, rows))
         }
-        prefs.items.forEach { item ->
+        prefs.deskItems.forEach { item ->
             key(item.id) {
                 val app = item.appKey?.let { byKey[it] }
                 if (item.isFolder || app != null) DesktopCell(item, app, byKey, prefs, icon, cellW, cellH, cols, rows, onOpenFolder)
@@ -143,7 +143,7 @@ private fun DesktopCell(
         Column(Modifier.fillMaxWidth().padding(vertical = 6.dp), horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(5.dp)) {
             if (item.isFolder) FolderGlyph(item.apps.mapNotNull { byKey[it] }, icon) else AppGlyph(app!!, icon)
-            IconLabel(if (item.isFolder) item.name.ifBlank { "Folder" } else app!!.label)
+            IconLabel(if (item.isFolder) item.name.ifBlank { "Folder" } else prefs.labelOf(app!!))
         }
         if (app != null) AppMenu(app, prefs, menu, { menu = false })
         else if (menu) androidx.compose.material3.DropdownMenu(expanded = true, onDismissRequest = { menu = false }) {

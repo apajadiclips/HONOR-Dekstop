@@ -10,6 +10,15 @@ import androidx.compose.ui.unit.dp
 
 /** Stroke icons from the design, built from SVG path strings (24x24 viewport). */
 object Glyph {
+    private fun filled(path: String) = ImageVector.Builder(defaultWidth = 24.dp, defaultHeight = 24.dp,
+        viewportWidth = 24f, viewportHeight = 24f)
+        .addPath(addPathNodes(path), fill = SolidColor(Color.White)).build()
+
+    val playFill = filled("M7 5l12 7l-12 7z")
+    val pause = filled("M7 5h4v14H7zM13 5h4v14h-4z")
+    val prev = filled("M18 6l-8 6l8 6zM6 6h2v12H6z")
+    val next = filled("M6 6l8 6l-8 6zM16 6h2v12h-2z")
+
     private fun stroke(path: String) = ImageVector.Builder(defaultWidth = 24.dp, defaultHeight = 24.dp,
         viewportWidth = 24f, viewportHeight = 24f)
         .addPath(addPathNodes(path), fill = null, stroke = SolidColor(Color.White), strokeLineWidth = 1.9f,
@@ -39,4 +48,17 @@ object Glyph {
     val work = stroke("M4 8h16v11H4zM9 8V5h6v3M4 13h16")
     val tool = stroke("M14 6a4 4 0 0 0 5 5l-8 8a2 2 0 0 1-3-3l8-8a4 4 0 0 0-2-2z")
     val tablet = stroke("M6 3h12v18H6zM11 18h2")
+    val windows = stroke("M3 5h11v9H3zM10 10h11v9H10z")
+    val power = stroke("M12 3v9M6.3 6.3a8 8 0 1 0 11.4 0")
+    val pin = stroke("M9 4h6l-1 6l3 3H7l3-3zM12 13v7")
+    val timer = stroke("M12 8v5l3 2M9 2h6M12 4a9 9 0 1 0 0 18a9 9 0 1 0 0-18")
+    val cast = stroke("M3 8V6h18v12h-6M3 12a6 6 0 0 1 6 6M3 15a3 3 0 0 1 3 3M3 18h.01")
+    val camera = stroke("M4 8h4l2-3h4l2 3h4v11H4zM12 10a3.5 3.5 0 1 0 0 7a3.5 3.5 0 1 0 0-7")
+    val record = stroke("M12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18")
+    val shot = stroke("M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4")
+    val plane = stroke("M3 11l18-7l-7 18l-2-8z")
+    val contrast = stroke("M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M12 3v18")
+    val pip = stroke("M3 5h18v14H3zM12 12h7v5h-7z")
+    val music = stroke("M9 18V5l11-2v13M9 18a3 3 0 1 1-6 0a3 3 0 1 1 6 0M20 16a3 3 0 1 1-6 0a3 3 0 1 1 6 0")
+    val clip = stroke("M8 4h8v3H8zM6 6H5v15h14V6h-1")
 }

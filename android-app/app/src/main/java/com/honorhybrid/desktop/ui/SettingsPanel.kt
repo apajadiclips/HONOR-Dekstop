@@ -52,6 +52,7 @@ fun SettingsPanel(prefs: Prefs, onWallpaper: () -> Unit, onClose: () -> Unit) {
             Choice("Saiz ikon", IconSize.entries, prefs.iconSize, { it.label }) { prefs.setIcon(it) }
 
             Toggle("Bar ruangan di tengah atas", prefs.showZoneBar) { prefs.setZoneBar(it) }
+            Toggle("Widget Debloat Manager", prefs.showDebloatWidget) { prefs.setDebloatWidget(it) }
             Toggle("Leret ke bawah untuk panel Liquid Glass", prefs.swipePanel) { prefs.setSwipe(it) }
             Toggle("Sembunyikan bar status sistem", prefs.hideStatusBar) { prefs.setHideStatus(it) }
 

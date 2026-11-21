@@ -57,6 +57,7 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             val list = withContext(Dispatchers.IO) { AppRepository.load(this@MainActivity) }
             prefs.seedDefaults(list)
+            prefs.ensureStartPins(list)
             apps.value = list
         }
     }

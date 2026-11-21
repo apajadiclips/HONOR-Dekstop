@@ -41,8 +41,15 @@ import com.honorhybrid.desktop.data.Zone
 fun AppMenu(app: AppEntry, prefs: Prefs, expanded: Boolean, onDismiss: () -> Unit,
             extra: List<Pair<String, () -> Unit>> = emptyList()) {
     val context = LocalContext.current
+    var renaming by remember { mutableStateOf(false) }
+    if (renaming) RenameDialog("Tukar nama", prefs.labelOf(app), onDone = { prefs.setLabel(app.key, it); renaming = false },
+        onReset = { prefs.setLabel(app.key, null); renaming = false }, onDismiss = { renaming = false })
     DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
         extra.forEach { (label, action) -> DropdownMenuItem(text = { Text(label) }, onClick = { action(); onDismiss() }) }
+        DropdownMenuItem(text = { Text("Tukar nama") }, onClick = { renaming = true; onDismiss() })
+        DropdownMenuItem(
+            text = { Text(if (app.key in prefs.startPins) "Nyahsemat dari Menu Mula" else "Sematkan ke Menu Mula") },
+            onClick = { prefs.toggleStartPin(app.key); onDismiss() })
         DropdownMenuItem(
             text = { Text(if (app.key in prefs.taskbar) "Buang dari taskbar" else "Sematkan ke taskbar") },
             onClick = { prefs.toggleTaskbar(app.key); onDismiss() })
@@ -92,10 +99,26 @@ fun AppIcon(
             verticalArrangement = Arrangement.spacedBy(5.dp),
         ) {
             AppGlyph(app, iconSize)
-            if (showLabel) IconLabel(app.label, labelColor)
+            if (showLabel) IconLabel(prefs.labelOf(app), labelColor)
         }
         AppMenu(app, prefs, menu, { menu = false }, extraMenu)
     }
+}
+
+@Composable
+fun RenameDialog(title: String, initial: String, onDone: (String) -> Unit, onReset: (() -> Unit)? = null,
+                 onDismiss: () -> Unit) {
+    var text by remember { mutableStateOf(initial) }
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title) },
+        text = { androidx.compose.material3.OutlinedTextField(text, { text = it }, singleLine = true) },
+        confirmButton = { androidx.compose.material3.TextButton({ onDone(text) }) { Text("Simpan") } },
+        dismissButton = {
+            if (onReset != null) androidx.compose.material3.TextButton(onReset) { Text("Nama asal") }
+            else androidx.compose.material3.TextButton(onDismiss) { Text("Batal") }
+        },
+    )
 }
 
 @Composable

@@ -18,15 +18,20 @@ import androidx.compose.ui.unit.dp
  * "Liquid Glass" surface: a dark translucent tint so white text stays readable on any wallpaper,
  * a light rim, and a bright highlight along the top edge.
  */
+/** Set from the "Kabur kaca" slider: 0 = clear glass, 1 = frosted/dark. */
+object GlassStyle { var strength = 0.6f }
+
 fun Modifier.glass(radius: Dp = 22.dp, strong: Boolean = true): Modifier {
     val shape: Shape = RoundedCornerShape(radius)
+    val k = 0.45f + GlassStyle.strength * 0.9f
     return this
         .shadow(if (strong) 18.dp else 0.dp, shape, clip = false, ambientColor = Color.Black, spotColor = Color.Black)
         .clip(shape)
         .background(
             Brush.verticalGradient(
-                if (strong) listOf(Color(0x6E1A2438), Color(0x8C101828))
-                else listOf(Color(0x24FFFFFF), Color(0x14FFFFFF))
+                if (strong) listOf(Color(0x1A2438).copy(alpha = (0.43f * k).coerceAtMost(0.95f)),
+                    Color(0x101828).copy(alpha = (0.55f * k).coerceAtMost(0.95f)))
+                else listOf(Color.White.copy(alpha = 0.14f * k), Color.White.copy(alpha = 0.08f * k))
             )
         )
         .border(

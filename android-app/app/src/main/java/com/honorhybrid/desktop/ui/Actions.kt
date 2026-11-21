@@ -9,9 +9,17 @@ import android.widget.Toast
 import com.honorhybrid.desktop.data.AppEntry
 
 object Actions {
-    fun launch(context: Context, app: AppEntry) = start(context,
+    /** Set by the launcher to record "Terkini" (recently opened). */
+    var onLaunch: ((AppEntry) -> Unit)? = null
+
+    fun launch(context: Context, app: AppEntry) = onLaunch?.invoke(app).let { start(context,
         Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER).setComponent(app.component)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)) }
+
+    fun launchPackage(context: Context, pkg: String) =
+        context.packageManager.getLaunchIntentForPackage(pkg)?.let { start(context, it) } ?: false
+
+    fun toast(context: Context, msg: String) = Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
 
     fun appInfo(context: Context, pkg: String) =
         start(context, Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$pkg")))
