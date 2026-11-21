@@ -117,3 +117,29 @@ class Cli(Base):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Doctor(Base):
+    def test_read_only_and_reports(self):
+        from debloat.actions import doctor
+        res = doctor.run_checks(self.dev)
+        names = {n: s for s, n, _ in res}
+        self.assertEqual(names["Akses Shizuku"], "OK")
+        self.assertEqual(names["Bateri"], "OK")          # 33% but charging
+        self.assertEqual(names["Storan dalaman"], "OK")  # ~9.5 GB free
+        self.assertEqual(names["Backup asal"], "AMARAN")
+        mutating = [c for c in self.dev.calls
+                    if c[:2] in (["settings", "put"], ["settings", "delete"])
+                    or (c[0] == "pm" and c[1] != "list") or c[:3] == ["cmd", "package", "install-existing"]]
+        self.assertEqual(mutating, [])
+
+    def test_disabled_protected_is_critical(self):
+        from debloat.actions import doctor
+        self.dev.pkgs["com.android.systemui"]["state"] = "disabled"
+        res = doctor.run_checks(self.dev)
+        self.assertTrue(any(s == "KRITIKAL" and "systemui" in d for s, _, d in res))
+        self.assertIn("JANGAN", doctor.summarize(res))
+
+    def test_cli_output(self):
+        from debloat.cli import main
+        self.assertEqual(main(["doctor"], runner=self.dev), 0)

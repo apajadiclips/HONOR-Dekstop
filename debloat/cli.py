@@ -7,7 +7,7 @@ import json
 import sys
 
 from . import __version__
-from .actions import dns, measure, packages
+from .actions import dns, doctor, measure, packages
 from .backup import store
 from .inventory.classifier import Classifier
 from .inventory.scanner import ENABLED, device_info, dynamic_protected, scan
@@ -64,6 +64,15 @@ def cmd_check(runner, args) -> int:
     print("Shizuku/rish OK.")
     print(json.dumps(device_info(runner), indent=2))
     return 0
+
+
+def cmd_doctor(runner, args) -> int:
+    print("Pemeriksaan kesihatan (baca sahaja, tiada perubahan)\n")
+    results = doctor.run_checks(runner)
+    for status, name, detail in results:
+        print(f"[{status:<8}] {name}: {detail}")
+    print("\n" + doctor.summarize(results))
+    return 1 if any(s == doctor.CRIT for s, _, _ in results) else 0
 
 
 def cmd_scan(runner, args) -> int:
@@ -201,6 +210,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub = p.add_subparsers(dest="command", required=True)
 
     sub.add_parser("check", help="semak sambungan Shizuku").set_defaults(fn=cmd_check)
+    sub.add_parser("doctor", help="semak kesihatan tablet sebelum mula (baca sahaja)").set_defaults(fn=cmd_doctor)
 
     s = sub.add_parser("scan", help="senarai dan klasifikasi semua pakej (tiada perubahan)")
     s.add_argument("--category", choices=list(CATEGORY_NAMES))

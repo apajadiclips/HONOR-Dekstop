@@ -35,6 +35,7 @@ Termux (hdm)  ──rish──▶  Shizuku (uid shell)  ──▶  pm / settings
 
 | Langkah | Arahan | Perubahan? |
 |---|---|---|
+| 0. Semak kesihatan | `./hdm doctor` | Tiada |
 | 1. Audit | `./hdm scan` | Tiada |
 | 2. Backup asal | `./hdm backup --label asal` | Tiada |
 | 3. Ukur prestasi | `./hdm measure sebelum` | Tiada |

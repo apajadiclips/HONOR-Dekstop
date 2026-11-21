@@ -50,8 +50,16 @@ class FakeDevice:
         if cmd[:2] == ["settings", "delete"]:
             self.settings.pop(cmd[3], None)
             return ""
+        if cmd[:2] == ["dumpsys", "battery"]:
+            return "  AC powered: false\n  USB powered: true\n  level: 33\n  temperature: 310\n"
+        if cmd[:3] == ["df", "-k", "/data"]:
+            return "Filesystem 1K-blocks Used Available Use% Mounted\n/dev/block/dm-5 110000000 100000000 10000000 91% /data\n"
+        if cmd[:2] == ["cat", "/proc/meminfo"]:
+            return "MemTotal: 3800000 kB\nMemAvailable: 1200000 kB\nSwapTotal: 2097152 kB\n"
+        if cmd[:2] == ["cat", "/proc/uptime"]:
+            return "90000.5 120000.0\n"
         if cmd[0] == "getprop":
-            return {"ro.product.model": "ELN-L09"}.get(cmd[1], "") + "\n"
+            return {"ro.product.model": "ELN-L09", "ro.build.version.release": "13"}.get(cmd[1], "") + "\n"
         if cmd[0] == "id":
             return "uid=2000(shell) gid=2000(shell)\n"
         raise AssertionError(f"unexpected command {cmd}")
