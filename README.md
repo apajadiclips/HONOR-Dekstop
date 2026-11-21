@@ -1,6 +1,23 @@
 # HONOR Hybrid Desktop
 
 Projek untuk HONOR Pad X9 (ELN-L09, MagicOS 7.1, Android 13, Snapdragon 685).
+## Launcher HONOR Hybrid Desktop (aplikasi Android)
+
+APK: [`releases/HonorHybridDesktop-0.1.0.apk`](releases/HonorHybridDesktop-0.1.0.apk) · kod: `android-app/`
+
+Pasang dari Termux telefon (selepas `./hdm sambung`):
+```sh
+curl -LO https://github.com/apajadiclips/HONOR-Dekstop/raw/ccr-eb00267b-ktwm98/releases/HonorHybridDesktop-0.1.0.apk
+adb install -r HonorHybridDesktop-0.1.0.apk
+```
+Kemudian tekan butang Home pada tablet dan pilih **HONOR Hybrid Desktop**.
+Untuk kembali ke HONOR Home: Menu Mula > **Tukar launcher**, atau
+Settings > Apps > Default apps > Launcher.
+
+Bina sendiri: `cd android-app && ./gradlew assembleRelease` (perlu Android SDK 35).
+
+## HONOR Debloat Manager
+
 Modul pertama: **HONOR Debloat Manager** (`debloat/`) — debloat tahap *balanced*
 dan sekatan iklan, **tanpa root, tanpa komputer, tanpa kehilangan data**.
 
