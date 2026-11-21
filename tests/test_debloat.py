@@ -143,3 +143,68 @@ class Doctor(Base):
     def test_cli_output(self):
         from debloat.cli import main
         self.assertEqual(main(["doctor"], runner=self.dev), 0)
+
+
+class FakeAdb:
+    def __init__(self, pair_ok=True, mdns_port=None, allow=True):
+        self.pair_ok, self.mdns_port, self.allow = pair_ok, mdns_port, allow
+        self.connected = []
+        self.calls = []
+
+    def __call__(self, cmd, timeout=60):
+        self.calls.append(cmd)
+        if cmd[:2] == ["adb", "devices"]:
+            return "List of devices attached\n" + "".join(f"{d}\tdevice\n" for d in self.connected)
+        if cmd[:2] == ["adb", "pair"]:
+            return "Successfully paired to localhost:41235 [guid=x]\n" if self.pair_ok else "error: protocol fault\n"
+        if cmd[:3] == ["adb", "mdns", "services"]:
+            return (f"adb-X\t_adb-tls-connect._tcp\t192.168.1.4:{self.mdns_port}\n" if self.mdns_port else "")
+        if cmd[:2] == ["adb", "connect"]:
+            if self.allow:
+                self.connected.append(cmd[2])
+            return f"connected to {cmd[2]}\n"
+        raise AssertionError(cmd)
+
+
+class Sambung(Base):
+    def _run(self, adb, answers):
+        from debloat.actions import connect
+        it = iter(answers)
+        out = []
+        serial = connect.run(ask=lambda _: next(it), say=out.append, sh=adb, which_ok=True)
+        return serial, out
+
+    def test_parse_target(self):
+        from debloat.actions.connect import parse_target
+        self.assertEqual(parse_target("41235"), ("localhost", 41235))
+        self.assertEqual(parse_target("192.168.1.4:38757"), ("192.168.1.4", 38757))
+        self.assertEqual(parse_target("IP address & Port 192.168.1.4:38757"), ("192.168.1.4", 38757))
+        self.assertIsNone(parse_target("PORT_UTAMA"))
+
+    def test_manual_flow(self):
+        adb = FakeAdb()
+        serial, _ = self._run(adb, ["41235", "852 244", "38757"])
+        self.assertEqual(serial, "localhost:38757")
+        self.assertIn(["adb", "pair", "localhost:41235", "852244"], adb.calls)
+        from debloat.actions.connect import saved_serial
+        self.assertEqual(saved_serial(), "localhost:38757")
+
+    def test_mdns_skips_port_question(self):
+        adb = FakeAdb(mdns_port=40001)
+        serial, _ = self._run(adb, ["41235", "123456"])  # no third answer needed
+        self.assertEqual(serial, "localhost:40001")
+
+    def test_bad_input_reprompts(self):
+        adb = FakeAdb()
+        serial, out = self._run(adb, ["PORT_PAIR", "41235", "123456", "38757"])
+        self.assertEqual(serial, "localhost:38757")
+        self.assertTrue(any("nombor port" in o for o in out))
+
+    def test_pair_fails_three_times(self):
+        serial, out = self._run(FakeAdb(pair_ok=False), ["41235", "111111"] * 3)
+        self.assertIsNone(serial)
+
+    def test_already_connected(self):
+        adb = FakeAdb(); adb.connected = ["localhost:5555"]
+        serial, _ = self._run(adb, [])
+        self.assertEqual(serial, "localhost:5555")

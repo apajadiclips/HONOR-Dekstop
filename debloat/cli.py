@@ -7,7 +7,7 @@ import json
 import sys
 
 from . import __version__
-from .actions import dns, doctor, measure, packages
+from .actions import connect, dns, doctor, measure, packages
 from .backup import store
 from .inventory.classifier import Classifier
 from .inventory.scanner import ENABLED, device_info, dynamic_protected, scan
@@ -73,6 +73,17 @@ def cmd_doctor(runner, args) -> int:
         print(f"[{status:<8}] {name}: {detail}")
     print("\n" + doctor.summarize(results))
     return 1 if any(s == doctor.CRIT for s, _, _ in results) else 0
+
+
+def cmd_sambung(runner, args) -> int:
+    print("HONOR Debloat Manager - sambung ke tablet melalui Wireless debugging")
+    serial = connect.run()
+    if not serial:
+        return 1
+    if args.no_check:
+        return 0
+    print("\nLANGKAH 3 - Pemeriksaan kesihatan\n")
+    return cmd_doctor(AdbRunner(serial), args)
 
 
 def cmd_scan(runner, args) -> int:
@@ -210,6 +221,9 @@ def build_parser() -> argparse.ArgumentParser:
     sub = p.add_subparsers(dest="command", required=True)
 
     sub.add_parser("check", help="semak sambungan Shizuku").set_defaults(fn=cmd_check)
+    s = sub.add_parser("sambung", aliases=["connect"], help="sambung ke tablet langkah demi langkah, kemudian semak kesihatan")
+    s.add_argument("--no-check", action="store_true", help="sambung sahaja, jangan jalankan doctor")
+    s.set_defaults(fn=cmd_sambung)
     sub.add_parser("doctor", help="semak kesihatan tablet sebelum mula (baca sahaja)").set_defaults(fn=cmd_doctor)
 
     s = sub.add_parser("scan", help="senarai dan klasifikasi semua pakej (tiada perubahan)")
@@ -250,7 +264,15 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None, runner=None) -> int:
     args = build_parser().parse_args(argv)
     if runner is None:
-        runner = AdbRunner() if args.adb else RishRunner(args.rish)
+        if args.adb:
+            serial = connect.saved_serial()
+            if serial and serial not in connect.connected_devices():
+                serial = None  # port changes after reboot; let adb pick the only device
+            runner = AdbRunner(serial)
+        elif args.command in ("sambung", "connect"):
+            runner = None
+        else:
+            runner = RishRunner(args.rish)
     try:
         return args.fn(runner, args)
     except (RunnerError, packages.ActionRefused) as e:

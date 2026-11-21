@@ -14,7 +14,21 @@ melalui Wireless Debugging. Tiada root diperlukan.
 Termux (hdm)  ──rish──▶  Shizuku (uid shell)  ──▶  pm / settings pada tablet
 ```
 
-## Persediaan (sekali sahaja)
+## Cara paling mudah (tanpa Shizuku)
+
+Dalam Termux pada tablet:
+```sh
+pkg install -y python git
+git clone -b ccr-eb00267b-ktwm98 https://github.com/apajadiclips/HONOR-Dekstop
+cd HONOR-Dekstop
+./hdm sambung
+```
+`hdm sambung` memasang adb jika perlu, kemudian bertanya port pairing, kod 6 digit
+dan port utama dari Settings > Wireless debugging, lalu terus menjalankan
+`hdm doctor`. Selepas itu semua arahan lain boleh dijalankan dengan `--adb`,
+contohnya `./hdm --adb scan`.
+
+## Persediaan dengan Shizuku (pilihan)
 
 1. Pasang **Shizuku** dan **Termux** (dari F-Droid / GitHub, bukan versi Play Store lama).
 2. Settings > About tablet > ketik *Build number* 7 kali > Developer options >
