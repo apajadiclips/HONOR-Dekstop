@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>HONOR Hybrid Desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#9DC1FF}a:hover{color:#C9DCFF}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="width: 1333px; height: 800px; position: relative; overflow: hidden; background: #0D1828; font-family: Inter, system-ui, sans-serif; color: #F2F5FA">
+
+<svg aria-hidden="true" width="1333" height="800" viewBox="0 0 1333 800" style="position: absolute; inset: 0">
+<path d="M0 560 C 260 470, 470 610, 760 520 S 1180 430, 1333 500 L1333 800 L0 800 Z" fill="#132744"></path>
+<path d="M0 650 C 300 580, 560 700, 880 620 S 1220 560, 1333 610 L1333 800 L0 800 Z" fill="#183358"></path>
+<circle cx="1040" cy="210" r="120" fill="#16294A"></circle>
+</svg>
+
+<div style="position: absolute; left: 24px; top: 24px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 6px; width: 196px">
+<sc-for list="{{desktop}}" as="app" hint-placeholder-count="8">
+<button style="all: unset; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 4px; border-radius: 10px; min-height: 44px">
+<span style="width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: {{app.bg}}">
+<svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{app.icon}}"></path></svg>
+</span>
+<span style="font-size: 13px; font-weight: 500; color: #FFFFFF; text-shadow: 0 1px 3px rgba(0,0,0,0.7); text-align: center">{{app.name}}</span>
+</button>
+</sc-for>
+</div>
+
+<div style="position: absolute; right: 24px; top: 24px; width: 340px; display: flex; flex-direction: column; gap: 12px">
+<div style="background: #142238; border: 1px solid #243753; border-radius: 16px; padding: 18px 20px">
+<div style="font-size: 44px; font-weight: 600; letter-spacing: -1px">3:57</div>
+<div style="font-size: 14px; color: #AEBBD0; margin-top: 2px">Sabtu, 21 November</div>
+</div>
+<div style="background: #142238; border: 1px solid #243753; border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<div style="display: flex; align-items: center; gap: 10px">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7FD4A6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-4 8-8 9c-4-1-8-4-8-9V6zM9 12l2 2l4-4"></path></svg>
+<span style="font-size: 15px; font-weight: 600">Debloat Manager</span>
+</div>
+<span style="font-size: 12px; color: #AEBBD0">ELN-L09</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{status}}" as="s" hint-placeholder-count="4">
+<div style="background: #0F1B2E; border-radius: 10px; padding: 10px 12px">
+<div style="font-size: 12px; color: #AEBBD0">{{s.label}}</div>
+<div style="font-size: 15px; font-weight: 600; margin-top: 3px; color: {{s.color}}">{{s.value}}</div>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; gap: 8px">
+<button style="flex: 1; min-height: 44px; border: 0; border-radius: 10px; background: {{accent}}; color: #0B1424; font-size: 14px; font-weight: 600; cursor: pointer">Imbas pakej</button>
+<button style="flex: 1; min-height: 44px; border: 1px solid #33496B; border-radius: 10px; background: transparent; color: #F2F5FA; font-size: 14px; font-weight: 500; cursor: pointer">Backup</button>
+</div>
+</div>
+</div>
+
+<sc-if value="{{startOpen}}" hint-placeholder-val="{{ true }}">
+<div style="position: absolute; left: 50%; transform: translateX(-50%); bottom: 72px; width: 600px; background: #16233A; border: 1px solid #2A3E5E; border-radius: 18px; box-shadow: 0 24px 60px rgba(0,0,0,0.5); display: flex; flex-direction: column">
+<div style="padding: 20px 24px 0">
+<label for="cari" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Cari aplikasi</label>
+<div style="display: flex; align-items: center; gap: 10px; background: #0F1A2C; border: 1px solid #2A3E5E; border-radius: 22px; padding: 0 16px; height: 44px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#AEBBD0" stroke-width="2" stroke-linecap="round"><path d="M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14M21 21l-5-5"></path></svg>
+<input id="cari" placeholder="Cari aplikasi, tetapan, fail" style="flex: 1; border: 0; outline: none; background: transparent; color: #F2F5FA; font-family: inherit; font-size: 14px">
+</div>
+</div>
+<div style="padding: 18px 24px 4px; display: flex; justify-content: space-between; align-items: baseline">
+<span style="font-size: 14px; font-weight: 600">Disematkan</span>
+<a href="#semua" style="font-size: 13px; text-decoration: none">Semua aplikasi</a>
+</div>
+<div style="padding: 4px 16px; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px">
+<sc-for list="{{pinned}}" as="app" hint-placeholder-count="12">
+<button style="all: unset; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 2px; border-radius: 10px">
+<span style="width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: {{app.bg}}">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{app.icon}}"></path></svg>
+</span>
+<span style="font-size: 12px; color: #E3E9F2; text-align: center">{{app.name}}</span>
+</button>
+</sc-for>
+</div>
+<div style="padding: 14px 24px 6px; font-size: 14px; font-weight: 600">Terkini</div>
+<div style="padding: 0 16px 14px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px">
+<sc-for list="{{recent}}" as="r" hint-placeholder-count="4">
+<button style="all: unset; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 10px; min-height: 44px">
+<span style="width: 36px; height: 36px; border-radius: 9px; background: #22334F; display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9D4E5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{r.icon}}"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 13px; color: #F2F5FA">{{r.name}}</span>
+<span style="font-size: 12px; color: #AEBBD0">{{r.when}}</span>
+</span>
+</button>
+</sc-for>
+</div>
+<div style="border-top: 1px solid #2A3E5E; padding: 10px 24px; display: flex; align-items: center; justify-content: space-between; background: #132036; border-radius: 0 0 18px 18px">
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="width: 32px; height: 32px; border-radius: 16px; background: #7E5BD6; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600">ME</span>
+<span style="font-size: 13px">Pengguna</span>
+</div>
+<button aria-label="Kuasa" style="width: 44px; height: 44px; border: 0; border-radius: 10px; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E3E9F2" stroke-width="2" stroke-linecap="round"><path d="M12 3v9M6.3 6.3a8 8 0 1 0 11.4 0"></path></svg>
+</button>
+</div>
+</div>
+</sc-if>
+
+<div style="position: absolute; left: 0; right: 0; bottom: 0; height: 60px; background: #121B2B; border-top: 1px solid #243753; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; box-sizing: border-box">
+<div style="display: flex; align-items: center; gap: 8px; width: 260px">
+<button style="border: 0; background: #1C2A42; color: #F2F5FA; border-radius: 10px; height: 44px; padding: 0 14px; display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#AEBBD0" stroke-width="2" stroke-linecap="round"><path d="M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14M21 21l-5-5"></path></svg>
+<span style="color: #AEBBD0">Cari</span>
+</button>
+</div>
+<div style="display: flex; align-items: center; gap: 6px">
+<button aria-label="Menu Mula" onClick="{{toggleStart}}" style="width: 48px; height: 48px; border: 0; border-radius: 10px; background: {{startBg}}; cursor: pointer; display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="{{accent}}"><circle cx="6" cy="6" r="2.2"></circle><circle cx="12" cy="6" r="2.2"></circle><circle cx="18" cy="6" r="2.2"></circle><circle cx="6" cy="12" r="2.2"></circle><circle cx="12" cy="12" r="2.2"></circle><circle cx="18" cy="12" r="2.2"></circle><circle cx="6" cy="18" r="2.2"></circle><circle cx="12" cy="18" r="2.2"></circle><circle cx="18" cy="18" r="2.2"></circle></svg>
+</button>
+<sc-for list="{{taskbar}}" as="app" hint-placeholder-count="6">
+<button aria-label="{{app.name}}" style="width: 48px; height: 48px; border: 0; border-radius: 10px; background: transparent; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px">
+<span style="width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; background: {{app.bg}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{app.icon}}"></path></svg>
+</span>
+<span style="width: {{app.dot}}; height: 3px; border-radius: 2px; background: {{accent}}"></span>
+</button>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; justify-content: flex-end; gap: 14px; width: 260px; padding-right: 6px">
+<svg role="img" aria-label="Wi-Fi bersambung" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E3E9F2" stroke-width="2" stroke-linecap="round"><path d="M2 9a15 15 0 0 1 20 0M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M12 20h.01"></path></svg>
+<svg role="img" aria-label="Bunyi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E3E9F2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4zM16 9a4 4 0 0 1 0 6"></path></svg>
+<span style="display: flex; align-items: center; gap: 5px; font-size: 13px">
+<svg role="img" aria-label="Bateri" width="22" height="14" viewBox="0 0 22 14" fill="none"><rect x="1" y="1" width="17" height="12" rx="3" stroke="#E3E9F2" stroke-width="1.6"></rect><rect x="3" y="3" width="5" height="8" rx="1.5" fill="#F5B14C"></rect><rect x="19" y="5" width="2" height="4" rx="1" fill="#E3E9F2"></rect></svg>
+33%
+</span>
+<span style="display: flex; flex-direction: column; align-items: flex-end; font-size: 12px; line-height: 1.35">
+<span>3:57 PTG</span>
+<span style="color: #AEBBD0">21/11/2026</span>
+</span>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"startOpen":{"editor":"boolean","default":true},"accent":{"editor":"color","default":"#5B9BFF","options":["#5B9BFF","#7FD4A6","#F5B14C","#B48CFF"]},"$preview":{"width":1333,"height":800}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { open: null };
+  }
+  renderVals() {
+    const I = {
+      folder: 'M3 7h6l2 2h10v10H3z',
+      globe: 'M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',
+      gear: 'M12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2',
+      camera: 'M4 8h4l2-3h4l2 3h4v11H4zM12 10a3.5 3.5 0 1 0 0 7a3.5 3.5 0 1 0 0-7',
+      image: 'M4 5h16v14H4zM4 16l5-5l4 4l3-3l4 4M15 9h.01',
+      music: 'M9 18V5l11-2v13M9 18a3 3 0 1 1-6 0a3 3 0 1 1 6 0M20 16a3 3 0 1 1-6 0a3 3 0 1 1 6 0',
+      video: 'M4 5h16v14H4zM10 9l5 3l-5 3z',
+      note: 'M6 3h9l4 4v14H6zM9 12h7M9 16h7M9 8h3',
+      cal: 'M4 6h16v15H4zM4 10h16M8 3v4M16 3v4',
+      shield: 'M12 3l8 3v6c0 5-4 8-8 9c-4-1-8-4-8-9V6zM9 12l2 2l4-4',
+      term: 'M4 5h16v14H4zM7 10l3 2l-3 2M12 15h5',
+      mail: 'M3 6h18v12H3zM3 7l9 6l9-6',
+      calc: 'M6 3h12v18H6zM9 7h6M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01',
+      bag: 'M5 8h14l-1 13H6zM9 8a3 3 0 0 1 6 0',
+      trash: 'M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14'
+    };
+    const C = { blue: '#2F6FE0', teal: '#138A7E', slate: '#4A5A75', orange: '#C7682B', purple: '#7550C9', green: '#2E8B4E', red: '#C2414B', ink: '#28344A' };
+    const open = this.state.open ?? (this.props.startOpen ?? true);
+    const accent = this.props.accent ?? '#5B9BFF';
+    return {
+      accent,
+      startOpen: open,
+      startBg: open ? '#24385A' : 'transparent',
+      toggleStart: () => this.setState({ open: !open }),
+      desktop: [
+        { name: 'Fail', icon: I.folder, bg: C.orange },
+        { name: 'Pelayar', icon: I.globe, bg: C.blue },
+        { name: 'Debloat', icon: I.shield, bg: C.green },
+        { name: 'Terminal', icon: I.term, bg: C.ink },
+        { name: 'Nota', icon: I.note, bg: C.purple },
+        { name: 'Tetapan', icon: I.gear, bg: C.slate },
+        { name: 'Galeri', icon: I.image, bg: C.teal },
+        { name: 'Tong Sampah', icon: I.trash, bg: C.slate }
+      ],
+      status: [
+        { label: 'Keselamatan sistem', value: 'Dilindungi', color: '#7FD4A6' },
+        { label: 'Sekatan iklan', value: 'Aktif (DNS)', color: '#7FD4A6' },
+        { label: 'Debloat', value: 'Balanced', color: '#F2F5FA' },
+        { label: 'Pemulihan', value: 'Tersedia', color: '#F2F5FA' }
+      ],
+      pinned: [
+        { name: 'Fail', icon: I.folder, bg: C.orange },
+        { name: 'Pelayar', icon: I.globe, bg: C.blue },
+        { name: 'E-mel', icon: I.mail, bg: C.blue },
+        { name: 'Kalendar', icon: I.cal, bg: C.red },
+        { name: 'Nota', icon: I.note, bg: C.purple },
+        { name: 'Kalkulator', icon: I.calc, bg: C.ink },
+        { name: 'Kamera', icon: I.camera, bg: C.slate },
+        { name: 'Galeri', icon: I.image, bg: C.teal },
+        { name: 'Muzik', icon: I.music, bg: C.red },
+        { name: 'Video', icon: I.video, bg: C.orange },
+        { name: 'Debloat', icon: I.shield, bg: C.green },
+        { name: 'Tetapan', icon: I.gear, bg: C.slate }
+      ],
+      recent: [
+        { name: 'scan.json', when: 'Debloat Manager · 2 min lalu', icon: I.note },
+        { name: 'Laporan Prestasi', when: 'Semalam', icon: I.cal },
+        { name: 'Backup asal', when: 'Semalam', icon: I.shield },
+        { name: 'Muat Turun', when: 'Fail · 3 hari lalu', icon: I.folder }
+      ],
+      taskbar: [
+        { name: 'Fail', icon: I.folder, bg: C.orange, dot: '14px' },
+        { name: 'Pelayar', icon: I.globe, bg: C.blue, dot: '6px' },
+        { name: 'E-mel', icon: I.mail, bg: C.blue, dot: '0px' },
+        { name: 'Debloat Manager', icon: I.shield, bg: C.green, dot: '6px' },
+        { name: 'Terminal', icon: I.term, bg: C.ink, dot: '0px' },
+        { name: 'Tetapan', icon: I.gear, bg: C.slate, dot: '0px' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

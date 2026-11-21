@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Ruangan Hiburan</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#FFFFFF}
+button{font-family:inherit}
+.glass{background:rgba(30,12,24,0.44);-webkit-backdrop-filter:blur(26px) saturate(170%);backdrop-filter:blur(26px) saturate(170%);border:1px solid rgba(255,255,255,0.26);box-shadow:inset 0 1px 0 rgba(255,255,255,0.42),inset 0 -1px 0 rgba(255,255,255,0.08),0 18px 50px rgba(0,0,0,0.35)}
+.glass-lite{background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.18);box-shadow:inset 0 1px 0 rgba(255,255,255,0.30)}
+</style>
+</helmet>
+<div style="width: 1333px; height: 800px; position: relative; overflow: hidden; background: #2A1020; font-family: Inter, system-ui, sans-serif; color: #FFFFFF">
+<svg aria-hidden="true" width="1333" height="800" viewBox="0 0 1333 800" style="position: absolute; inset: 0">
+<defs><filter id="hb-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="80"></feGaussianBlur></filter></defs>
+<g filter="url(#hb-blur)">
+<circle cx="300" cy="180" r="230" fill="#FF6B4A"></circle>
+<circle cx="820" cy="640" r="250" fill="#C2417A"></circle>
+<circle cx="1180" cy="200" r="200" fill="#6B2FBF"></circle>
+</g>
+</svg>
+<div style="position: absolute; inset: 0; background: {{dim}}"></div>
+
+<nav class="glass" aria-label="Ruangan" style="position: absolute; left: 16px; top: 16px; bottom: 16px; width: 220px; border-radius: 24px; padding: 18px 14px; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; color: #F5E4EC; padding: 0 10px 8px">Ruangan</span>
+<a href="Game.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 12px; text-decoration: none; font-size: 14px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9h12a4 4 0 0 1 0 8c-2 0-3-2-4-2h-4c-1 0-2 2-4 2a4 4 0 0 1 0-8zM8 11v4M6 13h4M16 12h.01M18 14h.01"></path></svg>Game</a>
+<a href="Sosial.dc.html" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 12px; text-decoration: none; font-size: 14px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"></path></svg>Media Sosial</a>
+<a href="Hiburan.dc.html" aria-current="page" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: 12px; background: rgba(255,255,255,0.22); text-decoration: none; font-size: 14px; font-weight: 600">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4zM10 9l5 3l-5 3z"></path></svg>Hiburan</a>
+<div class="glass-lite" style="margin-top: auto; border-radius: 16px; padding: 12px; font-size: 12px; line-height: 1.5">
+<div style="font-weight: 600; font-size: 13px">Wallpaper ruangan</div>
+<div style="color: #F5E4EC">Senja · ditukar automatik bila masuk ruangan ini</div>
+</div>
+</nav>
+
+<div style="position: absolute; left: 256px; right: 16px; top: 16px; bottom: 16px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 26px; font-weight: 700">Ruangan Hiburan</span>
+<span style="font-size: 13px; color: #F5E4EC">Video, muzik dan podcast, sedia untuk ditonton</span>
+</span>
+<button onClick="{{toggle}}" aria-pressed="{{pressed}}" class="glass" style="min-height: 44px; padding: 0 18px; border-radius: 22px; color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px">
+<span style="width: 10px; height: 10px; border-radius: 5px; background: {{dot}}"></span>Mod Teater: {{modeText}}</button>
+</div>
+
+<div class="glass" style="border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 15px; font-weight: 600">Sambung tonton</span>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px">
+<sc-for list="{{continueList}}" as="c" hint-placeholder-count="3">
+<button style="all: unset; cursor: pointer; display: flex; flex-direction: column; gap: 8px">
+<span style="position: relative; display: flex; align-items: center; justify-content: center; height: 150px; border-radius: 16px; background: {{c.art}}; border: 1px solid rgba(255,255,255,0.2); overflow: hidden">
+<span style="width: 48px; height: 48px; border-radius: 24px; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="#2A1020"><path d="M7 5l12 7l-12 7z"></path></svg></span>
+<span style="position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(255,255,255,0.25)"><span style="display: block; height: 4px; width: {{c.pct}}; background: #FFFFFF"></span></span>
+</span>
+<span style="font-size: 14px; font-weight: 600">{{c.title}}</span>
+<span style="font-size: 12px; color: #F5E4EC">{{c.meta}}</span>
+</button>
+</sc-for>
+</div>
+</div>
+
+<div style="display: flex; gap: 14px; flex: 1; min-height: 0">
+<div class="glass" style="flex: 1; border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 15px; font-weight: 600">Aplikasi hiburan</span>
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{apps}}" as="a" hint-placeholder-count="6">
+<button style="all: unset; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: {{a.bg}}; display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{a.icon}}"></path></svg>
+</span>
+<span style="font-size: 12px; text-align: center">{{a.name}}</span>
+</button>
+</sc-for>
+</div>
+<div style="display: flex; gap: 10px; margin-top: auto">
+<button class="glass-lite" style="flex: 1; min-height: 44px; border-radius: 14px; color: #FFFFFF; font-size: 13px; cursor: pointer">Hantar ke TV (cast)</button>
+<button class="glass-lite" style="flex: 1; min-height: 44px; border-radius: 14px; color: #FFFFFF; font-size: 13px; cursor: pointer">Gambar dalam gambar</button>
+<button class="glass-lite" style="flex: 1; min-height: 44px; border-radius: 14px; color: #FFFFFF; font-size: 13px; cursor: pointer">Pemasa tidur</button>
+</div>
+</div>
+
+<div class="glass" style="width: 340px; border-radius: 24px; padding: 18px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 12px; color: #F5E4EC">Sedang dimainkan</span>
+<div style="display: flex; gap: 12px; align-items: center">
+<span style="width: 64px; height: 64px; border-radius: 14px; background: #6B2FBF; flex-shrink: 0; display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13M9 18a3 3 0 1 1-6 0a3 3 0 1 1 6 0M20 16a3 3 0 1 1-6 0a3 3 0 1 1 6 0"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; gap: 3px"><span style="font-size: 15px; font-weight: 600">[Tajuk lagu]</span><span style="font-size: 12px; color: #F5E4EC">[Artis] · [Album]</span></span>
+</div>
+<span style="height: 4px; border-radius: 2px; background: rgba(255,255,255,0.25); overflow: hidden"><span style="display: block; height: 4px; width: 42%; background: #FFFFFF"></span></span>
+<div style="display: flex; justify-content: center; gap: 18px; align-items: center">
+<button aria-label="Sebelum" style="all: unset; cursor: pointer; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M18 6l-8 6l8 6zM6 6h2v12H6z"></path></svg></button>
+<button aria-label="Jeda" style="all: unset; cursor: pointer; width: 52px; height: 52px; border-radius: 26px; background: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="#2A1020"><path d="M7 5h4v14H7zM13 5h4v14h-4z"></path></svg></button>
+<button aria-label="Seterusnya" style="all: unset; cursor: pointer; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M6 6l8 6l-8 6zM16 6h2v12h-2z"></path></svg></button>
+</div>
+<div class="glass-lite" style="border-radius: 16px; padding: 12px; font-size: 13px; display: flex; flex-direction: column; gap: 6px; margin-top: auto">
+<span style="font-weight: 600">Mod Teater</span>
+<span style="color: #F5E4EC; line-height: 1.5">Malapkan latar, senyapkan notifikasi, audio penuh dan sekat iklan DNS kekal aktif.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1333,"height":800}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { on: false }; }
+  renderVals() {
+    const on = this.state.on;
+    return {
+      toggle: () => this.setState({ on: !on }),
+      pressed: on ? 'true' : 'false',
+      modeText: on ? 'Aktif' : 'Mati',
+      dot: on ? '#5CF29A' : '#B9A3AF',
+      dim: on ? 'rgba(0,0,0,0.45)' : 'rgba(0,0,0,0.10)',
+      continueList: [
+        { title: '[Siri drama]', meta: 'Musim 1 · Episod 4 · 23 min lagi', pct: '62%', art: '#8E2F52' },
+        { title: '[Filem]', meta: '1 j 05 min lagi', pct: '28%', art: '#3D2A7A' },
+        { title: '[Video dimuat turun]', meta: 'Luar talian · 8 min lagi', pct: '80%', art: '#B4502E' }
+      ],
+      apps: [
+        { name: 'Video', bg: '#C2417A', icon: 'M4 5h16v14H4zM10 9l5 3l-5 3z' },
+        { name: 'Muzik', bg: '#6B2FBF', icon: 'M9 18V5l11-2v13M9 18a3 3 0 1 1-6 0a3 3 0 1 1 6 0M20 16a3 3 0 1 1-6 0a3 3 0 1 1 6 0' },
+        { name: 'Podcast', bg: '#E65100', icon: 'M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3M5 11a7 7 0 0 0 14 0M12 18v3' },
+        { name: 'Radio', bg: '#00838F', icon: 'M4 9h16v11H4zM8 9l9-5M8 15h.01M14 13h4M14 16h4' },
+        { name: 'Galeri', bg: '#2E7D32', icon: 'M4 5h16v14H4zM4 16l5-5l4 4l3-3l4 4M15 9h.01' },
+        { name: 'Pemain fail', bg: '#4A5A75', icon: 'M3 7h6l2 2h10v10H3zM10 12l4 2l-4 2z' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

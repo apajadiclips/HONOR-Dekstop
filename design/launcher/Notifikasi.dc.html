@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<title>Pusat Notifikasi Liquid Glass</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#CFE0FF}a:hover{color:#FFFFFF}
+button{font-family:inherit}
+.glass{background:rgba(18,26,44,0.42);-webkit-backdrop-filter:blur(26px) saturate(170%);backdrop-filter:blur(26px) saturate(170%);border:1px solid rgba(255,255,255,0.28);box-shadow:inset 0 1px 0 rgba(255,255,255,0.45),inset 0 -1px 0 rgba(255,255,255,0.08),0 18px 50px rgba(0,0,0,0.35)}
+.glass-lite{background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.18);box-shadow:inset 0 1px 0 rgba(255,255,255,0.30)}
+input[type=range]{accent-color:#FFFFFF}
+</style>
+</helmet>
+<div style="width: 1333px; height: 800px; position: relative; overflow: hidden; background: #0B1426; font-family: Inter, system-ui, sans-serif; color: #FFFFFF">
+
+<svg aria-hidden="true" width="1333" height="800" viewBox="0 0 1333 800" style="position: absolute; inset: 0">
+<defs><filter id="lg-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="70"></feGaussianBlur></filter></defs>
+<g filter="url(#lg-blur)">
+<circle cx="260" cy="200" r="220" fill="#2F5BFF"></circle>
+<circle cx="760" cy="620" r="240" fill="#8A4DFF"></circle>
+<circle cx="1150" cy="160" r="200" fill="#12A99B"></circle>
+<circle cx="1180" cy="640" r="170" fill="#FF7A45"></circle>
+</g>
+</svg>
+
+<div style="position: absolute; left: 16px; top: 92px; width: 440px; height: 616px; border-radius: 14px; background: #F4F6FA; color: #1A2233; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 14px 40px rgba(0,0,0,0.35)">
+<div style="height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px 0 16px; background: #E6EBF3; font-size: 13px; font-weight: 600">
+<span>Fail</span>
+<span style="font-size: 12px; font-weight: 500; color: #4A5568">Snap: kiri</span>
+</div>
+<div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; font-size: 13px">
+<sc-for list="{{files}}" as="f" hint-placeholder-count="7">
+<div style="display: flex; justify-content: space-between; padding: 10px 8px; border-radius: 8px; background: {{f.bg}}">
+<span>{{f.name}}</span><span style="color: #4A5568">{{f.size}}</span>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="position: absolute; left: 464px; top: 92px; width: 440px; height: 616px; border-radius: 14px; background: #FFFFFF; color: #1A2233; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 14px 40px rgba(0,0,0,0.35)">
+<div style="height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px 0 16px; background: #E6EBF3; font-size: 13px; font-weight: 600">
+<span>Pelayar</span>
+<span style="font-size: 12px; font-weight: 500; color: #4A5568">Snap: kanan</span>
+</div>
+<div style="padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<div style="height: 36px; border-radius: 18px; background: #EEF1F6; display: flex; align-items: center; padding: 0 14px; font-size: 13px; color: #4A5568">dns.adguard-dns.com aktif</div>
+<div style="height: 180px; border-radius: 12px; background: #DCE6F7"></div>
+<div style="height: 14px; width: 80%; border-radius: 7px; background: #E3E8F0"></div>
+<div style="height: 14px; width: 65%; border-radius: 7px; background: #E3E8F0"></div>
+<div style="height: 14px; width: 72%; border-radius: 7px; background: #E3E8F0"></div>
+</div>
+</div>
+
+<div class="glass" style="position: absolute; left: 50%; top: 16px; transform: translateX(-50%); width: 420px; border-radius: 22px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; box-sizing: border-box">
+<span style="width: 36px; height: 36px; border-radius: 10px; background: #2E8B4E; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-4 8-8 9c-4-1-8-4-8-9V6zM9 12l2 2l4-4"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0">
+<span style="font-size: 13px; font-weight: 600">Backup asal disimpan</span>
+<span style="font-size: 12px; color: #E4EAF5">Debloat Manager · semua status pakej direkod</span>
+</span>
+<span style="font-size: 12px; color: #E4EAF5">kini</span>
+</div>
+
+<div style="position: absolute; right: 392px; top: 92px; width: 340px; display: flex; flex-direction: column; gap: 10px">
+<div class="glass" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-radius: 18px">
+<span style="font-size: 15px; font-weight: 600">Notifikasi</span>
+<a href="#kosong" style="font-size: 13px; text-decoration: none">Kosongkan semua</a>
+</div>
+<sc-for list="{{notifs}}" as="n" hint-placeholder-count="4">
+<div class="glass" style="border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; gap: 12px; align-items: flex-start">
+<span style="width: 34px; height: 34px; border-radius: 10px; background: {{n.bg}}; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{n.icon}}"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; gap: 3px; flex: 1">
+<span style="display: flex; justify-content: space-between; font-size: 12px; color: #E4EAF5"><span>{{n.app}}</span><span>{{n.when}}</span></span>
+<span style="font-size: 14px; font-weight: 600">{{n.title}}</span>
+<span style="font-size: 13px; color: #EEF2F9; line-height: 1.4">{{n.body}}</span>
+</span>
+</div>
+<div style="display: flex; gap: 8px; padding-left: 46px">
+<sc-for list="{{n.actions}}" as="a" hint-placeholder-count="2">
+<button class="glass-lite" style="min-height: 34px; padding: 0 14px; border-radius: 17px; color: #FFFFFF; font-size: 13px; font-weight: 500; cursor: pointer">{{a}}</button>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+
+<div class="glass" style="position: absolute; right: 16px; top: 16px; width: 360px; height: 692px; border-radius: 26px; padding: 18px; box-sizing: border-box; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<span style="font-size: 26px; font-weight: 600; letter-spacing: -0.5px">3:57</span>
+<span style="font-size: 13px; color: #E4EAF5">Sabtu, 21 Nov</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{tiles}}" as="t" hint-placeholder-count="8">
+<button aria-pressed="{{t.on}}" style="all: unset; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px">
+<span class="glass-lite" style="width: 56px; height: 56px; border-radius: 18px; display: flex; align-items: center; justify-content: center; background: {{t.bg}}">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{t.icon}}"></path></svg>
+</span>
+<span style="font-size: 11px; color: #FFFFFF; text-align: center">{{t.name}}</span>
+</button>
+</sc-for>
+</div>
+<div class="glass-lite" style="border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px">
+<label style="display: flex; align-items: center; gap: 10px; font-size: 12px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round"><path d="M12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"></path></svg>
+<span style="width: 74px">Kecerahan</span>
+<input type="range" min="0" max="100" value="70" style="flex: 1">
+</label>
+<label style="display: flex; align-items: center; gap: 10px; font-size: 12px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4zM16 9a4 4 0 0 1 0 6"></path></svg>
+<span style="width: 74px">Kelantangan</span>
+<input type="range" min="0" max="100" value="45" style="flex: 1">
+</label>
+</div>
+<div class="glass-lite" style="border-radius: 18px; padding: 12px 14px; display: flex; align-items: center; gap: 12px">
+<span style="width: 48px; height: 48px; border-radius: 12px; background: #8A4DFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13M9 18a3 3 0 1 1-6 0a3 3 0 1 1 6 0M20 16a3 3 0 1 1-6 0a3 3 0 1 1 6 0"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0">
+<span style="font-size: 12px; color: #E4EAF5">Sedang dimainkan</span>
+<span style="font-size: 14px; font-weight: 600">[Tajuk lagu]</span>
+<span style="font-size: 12px; color: #E4EAF5">[Artis]</span>
+</span>
+<button aria-label="Sebelum" style="all: unset; cursor: pointer; width: 32px; height: 44px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M18 6l-8 6l8 6zM6 6h2v12H6z"></path></svg></button>
+<button aria-label="Main" style="all: unset; cursor: pointer; width: 40px; height: 40px; border-radius: 20px; background: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="#141C2B"><path d="M7 5l12 7l-12 7z"></path></svg></button>
+<button aria-label="Seterusnya" style="all: unset; cursor: pointer; width: 32px; height: 44px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M6 6l8 6l-8 6zM16 6h2v12h-2z"></path></svg></button>
+</div>
+<div class="glass-lite" style="border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 12px; color: #E4EAF5">Peranti bersambung</span>
+<sc-for list="{{devices}}" as="d" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 10px; font-size: 13px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="{{d.icon}}"></path></svg>
+<span style="flex: 1">{{d.name}}</span>
+<span style="width: 60px; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.25); overflow: hidden"><span style="display: block; height: 6px; width: {{d.pct}}; background: #FFFFFF"></span></span>
+<span style="width: 34px; text-align: right; font-size: 12px">{{d.pct}}</span>
+</div>
+</sc-for>
+</div>
+<div class="glass-lite" style="border-radius: 18px; padding: 12px 14px; display: flex; align-items: center; gap: 12px">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14a8 8 0 1 1-10-10a7 7 0 0 0 10 10z"></path></svg>
+<span style="display: flex; flex-direction: column; gap: 2px; flex: 1">
+<span style="font-size: 14px; font-weight: 600">Mod Fokus: Kerja</span>
+<span style="font-size: 12px; color: #E4EAF5">Notifikasi senyap hingga 5:00 PTG</span>
+</span>
+<button class="glass-lite" style="min-height: 34px; padding: 0 12px; border-radius: 17px; color: #FFFFFF; font-size: 12px; cursor: pointer">Tamatkan</button>
+</div>
+</div>
+
+<div class="glass" style="position: absolute; left: 0; right: 0; bottom: 0; height: 60px; border-radius: 0; border-left: 0; border-right: 0; border-bottom: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; box-sizing: border-box">
+<div style="display: flex; align-items: center; gap: 6px; width: 300px">
+<sc-for list="{{desks}}" as="v" hint-placeholder-count="3">
+<button aria-label="{{v.label}}" style="min-width: 44px; height: 34px; border-radius: 17px; border: 1px solid rgba(255,255,255,0.25); background: {{v.bg}}; color: #FFFFFF; font-size: 13px; font-weight: 600; cursor: pointer">{{v.n}}</button>
+</sc-for>
+<span style="font-size: 12px; color: #E4EAF5; margin-left: 4px">Desktop 1 · Kerja</span>
+</div>
+<div style="display: flex; align-items: center; gap: 6px">
+<button aria-label="Menu Mula" style="width: 48px; height: 48px; border: 0; border-radius: 12px; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF"><circle cx="6" cy="6" r="2.2"></circle><circle cx="12" cy="6" r="2.2"></circle><circle cx="18" cy="6" r="2.2"></circle><circle cx="6" cy="12" r="2.2"></circle><circle cx="12" cy="12" r="2.2"></circle><circle cx="18" cy="12" r="2.2"></circle><circle cx="6" cy="18" r="2.2"></circle><circle cx="12" cy="18" r="2.2"></circle><circle cx="18" cy="18" r="2.2"></circle></svg>
+</button>
+<sc-for list="{{taskbar}}" as="app" hint-placeholder-count="5">
+<button aria-label="{{app.name}}" style="width: 48px; height: 48px; border: 0; border-radius: 12px; background: transparent; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px">
+<span style="width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: {{app.bg}}">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="{{app.icon}}"></path></svg>
+</span>
+<span style="width: {{app.dot}}; height: 3px; border-radius: 2px; background: #FFFFFF"></span>
+</button>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; justify-content: flex-end; gap: 12px; width: 300px; font-size: 12px">
+<span class="glass-lite" style="display: flex; gap: 10px; padding: 6px 10px; border-radius: 14px; white-space: nowrap">
+<span>RAM 2.9/4 GB</span><span>CPU 18%</span>
+</span>
+<svg role="img" aria-label="Mod Fokus aktif" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14a8 8 0 1 1-10-10a7 7 0 0 0 10 10z"></path></svg>
+<svg role="img" aria-label="Wi-Fi bersambung" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"><path d="M2 9a15 15 0 0 1 20 0M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M12 20h.01"></path></svg>
+<span>33%</span>
+<span style="display: flex; flex-direction: column; align-items: flex-end; line-height: 1.35"><span>3:57 PTG</span><span style="color: #E4EAF5">21/11/2026</span></span>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1333,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const I = {
+      wifi: 'M2 9a15 15 0 0 1 20 0M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M12 20h.01',
+      bt: 'M7 7l10 10l-5 5V2l5 5L7 17',
+      moon: 'M20 14a8 8 0 1 1-10-10a7 7 0 0 0 10 10z',
+      shield: 'M12 3l8 3v6c0 5-4 8-8 9c-4-1-8-4-8-9V6zM9 12l2 2l4-4',
+      half: 'M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M12 3v18',
+      shot: 'M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4',
+      rec: 'M12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18',
+      plane: 'M3 11l18-7l-7 18l-2-8z',
+      kb: 'M3 6h18v12H3zM7 10h.01M11 10h.01M15 10h.01M7 14h10',
+      mouse: 'M12 3a6 6 0 0 0-6 6v6a6 6 0 0 0 12 0V9a6 6 0 0 0-6-6M12 7v3',
+      head: 'M4 15v-3a8 8 0 0 1 16 0v3M4 15h3v5H4zM17 15h3v5h-3z',
+      msg: 'M4 5h16v11H9l-5 4z',
+      cal: 'M4 6h16v15H4zM4 10h16M8 3v4M16 3v4',
+      folder: 'M3 7h6l2 2h10v10H3z',
+      globe: 'M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',
+      mail: 'M3 6h18v12H3zM3 7l9 6l9-6',
+      term: 'M4 5h16v14H4zM7 10l3 2l-3 2M12 15h5'
+    };
+    const on = '#2F6FE0';
+    const off = 'rgba(255,255,255,0.10)';
+    return {
+      tiles: [
+        { name: 'Wi-Fi', icon: I.wifi, bg: on, on: 'true' },
+        { name: 'Bluetooth', icon: I.bt, bg: on, on: 'true' },
+        { name: 'Fokus', icon: I.moon, bg: on, on: 'true' },
+        { name: 'Sekat Iklan', icon: I.shield, bg: on, on: 'true' },
+        { name: 'Mod Gelap', icon: I.half, bg: off, on: 'false' },
+        { name: 'Tangkap Skrin', icon: I.shot, bg: off, on: 'false' },
+        { name: 'Rakam Skrin', icon: I.rec, bg: off, on: 'false' },
+        { name: 'Mod Pesawat', icon: I.plane, bg: off, on: 'false' }
+      ],
+      devices: [
+        { name: 'Papan kekunci BT', icon: I.kb, pct: '80%' },
+        { name: 'Tetikus', icon: I.mouse, pct: '45%' },
+        { name: 'Earbuds', icon: I.head, pct: '62%' }
+      ],
+      notifs: [
+        { app: 'Debloat Manager', when: '2 min', title: 'com.facebook.appmanager di-disable', body: 'Uji tablet anda. Pakej boleh dipulihkan bila-bila masa.', icon: I.shield, bg: '#2E8B4E', actions: ['Undur', 'Lihat jurnal'] },
+        { app: 'Sekat Iklan', when: '10 min', title: 'Private DNS aktif', body: 'Jika ada aplikasi gagal memuatkan kandungan, matikan dengan satu ketik.', icon: I.shield, bg: '#2F6FE0', actions: ['Matikan DNS'] },
+        { app: 'Mesej', when: '15 min', title: '[Nama kenalan]', body: '[Pratonton mesej]', icon: I.msg, bg: '#7550C9', actions: ['Balas', 'Tandakan dibaca'] },
+        { app: 'Kalendar', when: '4:30 PTG', title: '[Nama acara]', body: 'Bermula dalam 30 minit', icon: I.cal, bg: '#C2414B', actions: ['Tunda'] }
+      ],
+      files: [
+        { name: 'Muat Turun', size: '—', bg: '#DCE6F7' },
+        { name: 'Dokumen', size: '—', bg: 'transparent' },
+        { name: 'honor-debloat', size: '—', bg: 'transparent' },
+        { name: 'scan.json', size: '48 KB', bg: 'transparent' },
+        { name: 'journal.jsonl', size: '3 KB', bg: 'transparent' },
+        { name: 'Gambar', size: '—', bg: 'transparent' },
+        { name: 'Video', size: '—', bg: 'transparent' }
+      ],
+      desks: [
+        { n: '1', label: 'Desktop 1, Kerja', bg: 'rgba(255,255,255,0.30)' },
+        { n: '2', label: 'Desktop 2, Hiburan', bg: 'transparent' },
+        { n: '+', label: 'Desktop baharu', bg: 'transparent' }
+      ],
+      taskbar: [
+        { name: 'Fail', icon: I.folder, bg: '#C7682B', dot: '14px' },
+        { name: 'Pelayar', icon: I.globe, bg: '#2F6FE0', dot: '14px' },
+        { name: 'E-mel', icon: I.mail, bg: '#2F6FE0', dot: '0px' },
+        { name: 'Debloat Manager', icon: I.shield, bg: '#2E8B4E', dot: '6px' },
+        { name: 'Terminal', icon: I.term, bg: '#28344A', dot: '0px' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
